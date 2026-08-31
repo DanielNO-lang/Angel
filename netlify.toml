@@ -1,9 +1,7 @@
 [build]
-command = "npm run build"
-publish = "dist"
-
-[build.environment]
-NODE_VERSION = "20"
+base = "site"
+command = "echo 'Angel static production build'"
+publish = "."
 
 [[redirects]]
 from = "/*"

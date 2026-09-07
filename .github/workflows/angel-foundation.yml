@@ -21,6 +21,7 @@ jobs:
           test -f supabase/functions/angel-chat/index.ts
           test -f supabase/migrations/20260902115218_angel_brain_memory_foundation.sql
           test -f supabase/migrations/20260907070100_angel_foundation_hardening.sql
+          test -f supabase/migrations/20260907071000_angel_security_linter_cleanup.sql
           grep -q 'publish = "."' netlify.toml
           grep -q 'verify_jwt = true' supabase/config.toml
           grep -q 'GEMINI_API_KEY' supabase/functions/angel-chat/index.ts

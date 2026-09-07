@@ -1,0 +1,37 @@
+name: Angel foundation checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate production files
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f site/index.html
+          test -f netlify.toml
+          test -f supabase/config.toml
+          test -f supabase/functions/angel-chat/index.ts
+          test -f supabase/migrations/20260902115218_angel_brain_memory_foundation.sql
+          test -f supabase/migrations/20260907070100_angel_foundation_hardening.sql
+          grep -q 'publish = "."' netlify.toml
+          grep -q 'verify_jwt = true' supabase/config.toml
+          grep -q 'GEMINI_API_KEY' supabase/functions/angel-chat/index.ts
+          if grep -RniE '(AIzaSy|sk-[A-Za-z0-9_-]{20,}|service_role)' site supabase/functions; then
+            echo 'Potential secret found in client/server source.'
+            exit 1
+          fi
+      - name: Validate no obsolete frontend remains
+        shell: bash
+        run: |
+          set -euo pipefail
+          test ! -e src
+          test ! -e package.json
+          test ! -e vite.config.js

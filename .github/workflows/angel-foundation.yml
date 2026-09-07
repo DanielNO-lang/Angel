@@ -36,3 +36,17 @@ jobs:
           test ! -e src
           test ! -e package.json
           test ! -e vite.config.js
+      - name: Parse production JavaScript
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          html = Path('site/index.html').read_text(encoding='utf-8')
+          scripts = re.findall(r'<script type="module">\s*(.*?)\s*</script>', html, flags=re.S)
+          if len(scripts) != 1:
+              raise SystemExit(f'Expected exactly one module script, found {len(scripts)}')
+          Path('/tmp/angel-app.mjs').write_text(scripts[0], encoding='utf-8')
+          PY
+          node --check /tmp/angel-app.mjs

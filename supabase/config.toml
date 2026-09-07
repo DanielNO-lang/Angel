@@ -1,0 +1,4 @@
+project_id = "ybvyveonfvixsfusoqqz"
+
+[functions.angel-chat]
+verify_jwt = true

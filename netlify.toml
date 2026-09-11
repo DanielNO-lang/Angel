@@ -4,8 +4,13 @@ command = "echo 'Angel static production build'"
 publish = "."
 
 [[redirects]]
-from = "/*"
-to = "/index.html"
+from = "/"
+to = "/app.html"
+status = 200
+
+[[redirects]]
+from = "/index.html"
+to = "/app.html"
 status = 200
 
 [[headers]]
@@ -14,6 +19,16 @@ for = "/"
 Cache-Control = "no-store, max-age=0"
 
 [[headers]]
-for = "/index.html"
+for = "/app.html"
+[headers.values]
+Cache-Control = "no-store, max-age=0"
+
+[[headers]]
+for = "/app.js"
+[headers.values]
+Cache-Control = "no-store, max-age=0"
+
+[[headers]]
+for = "/app.css"
 [headers.values]
 Cache-Control = "no-store, max-age=0"

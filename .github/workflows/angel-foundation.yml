@@ -16,9 +16,14 @@ jobs:
         run: |
           set -euo pipefail
           test -f site/index.html
+          test -f site/app.html
+          test -f site/app.js
+          test -f site/app.css
           test -f netlify.toml
           test -f supabase/config.toml
           test -f supabase/functions/angel-chat/index.ts
+          test -f supabase/functions/angel-tools/index.ts
+          test -f supabase/functions/angel-orchestrator/index.ts
           test -f supabase/migrations/20260902115218_angel_brain_memory_foundation.sql
           test -f supabase/migrations/20260907070100_angel_foundation_hardening.sql
           test -f supabase/migrations/20260907071000_angel_security_linter_cleanup.sql
@@ -40,13 +45,4 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python3 - <<'PY'
-          from pathlib import Path
-          import re
-          html = Path('site/index.html').read_text(encoding='utf-8')
-          scripts = re.findall(r'<script type="module">\s*(.*?)\s*</script>', html, flags=re.S)
-          if len(scripts) != 1:
-              raise SystemExit(f'Expected exactly one module script, found {len(scripts)}')
-          Path('/tmp/angel-app.mjs').write_text(scripts[0], encoding='utf-8')
-          PY
-          node --check /tmp/angel-app.mjs
+          node --check site/app.js

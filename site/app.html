@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0d0f10">
+  <meta name="description" content="Angel, a private intelligence workspace for thinking, research, voice and files.">
+  <title>Angel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/app.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand"><div class="mark">A</div><div><div class="brandName">Angel</div><span class="brandSub">private intelligence</span></div></div>
+      <button class="newChat" id="newChat"><span>＋</span> New conversation</button>
+      <nav class="nav">
+        <button class="navBtn active" id="angelNav"><span class="navIcon">A</span> Angel</button>
+        <button class="navBtn" id="historyNav"><span class="navIcon">◷</span> History</button>
+        <button class="navBtn" id="exploreNav"><span class="navIcon">⌁</span> Explore</button>
+        <button class="navBtn" id="projectsNav"><span class="navIcon">□</span> Projects</button>
+      </nav>
+      <div class="sideGrow"></div>
+      <div class="account" id="sideUser"><div class="avatar">A</div><div class="accountText"><strong>Guest mode</strong><span>Sign in to save conversations</span></div></div>
+      <nav class="nav">
+        <button class="navBtn" id="settingsNav"><span class="navIcon">⚙</span> Settings</button>
+        <button class="navBtn" id="sideAuth"><span class="navIcon">◉</span> <span id="sideAuthText">Sign in</span></button>
+      </nav>
+    </aside>
+    <div class="drawerShade" id="drawerShade"></div>
+    <main class="main">
+      <header class="topbar">
+        <button class="mobileMenu" id="mobileMenu">☰</button>
+        <div class="crumb"><span class="statusDot"></span><span id="brainStatus">Angel is ready</span></div>
+        <div class="topActions"><button class="topBtn hideMobile" id="authBtn">Sign in</button></div>
+      </header>
+      <section class="page" id="page"></section>
+      <div class="activity hidden" id="activity"></div>
+      <div class="composer">
+        <div class="composerInner">
+          <div class="composerTools">
+            <button class="toolBtn" id="micBtn" title="Voice input">◉</button>
+            <button class="toolBtn" id="researchBtn" title="Research">⌕</button>
+            <button class="toolBtn" id="uploadBtn" title="Attach file">＋</button>
+            <span class="toolState" id="toolState">Voice ready · Research off · Files ready</span>
+            <input id="fileInput" type="file" hidden accept="image/*,.pdf,.txt,.md,.csv,.doc,.docx,.ppt,.pptx,.xls,.xlsx">
+          </div>
+          <div class="composerBox">
+            <textarea id="message" rows="1" placeholder="Ask Angel anything…"></textarea>
+            <button class="send" id="sendBtn" aria-label="Send">↑</button>
+          </div>
+          <div class="composerHint" id="footerStatus">Sign in to keep conversations across devices · Enter to send · Shift + Enter for a new line</div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <div class="modalBackdrop" id="modalBackdrop">
+    <div class="modal authModal" id="authView">
+      <div class="modalHead"><h2>Enter Angel</h2><button class="close" id="closeModal">×</button></div>
+      <p style="color:#8b8e88;font-size:12px;line-height:1.6">Continue securely with your Google account. Your conversations are scoped to your account.</p>
+      <button class="authButton" id="googleBtn">Continue with Google</button>
+      <div class="authStatus" id="authStatus"></div>
+    </div>
+  </div>
+  <div class="voicePanel" id="voicePanel">
+    <div class="voiceTop"><span class="voiceTitle">Angel is listening</span><button class="voiceClose" id="voiceClose">×</button></div>
+    <div class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="voiceActions"><button class="stop" id="voiceStop">Stop listening</button></div>
+  </div>
+  <div class="toast" id="toast"></div>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

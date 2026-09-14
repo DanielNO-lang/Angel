@@ -1,0 +1,10 @@
+{
+  "name": "Angel · Private Intelligence",
+  "short_name": "Angel",
+  "description": "A private intelligence workspace for research, voice, files and agentic work.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#090d0f",
+  "theme_color": "#090d0f",
+  "icons": [{"src":"/angel-logo.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+}

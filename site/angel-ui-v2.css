@@ -1,0 +1,202 @@
+:root{
+  --angel-bg:#0b0d0c;
+  --angel-surface:#111513;
+  --angel-surface-2:#151a17;
+  --angel-surface-3:#1a201d;
+  --angel-paper:#ece8df;
+  --angel-soft:#c8cbc6;
+  --angel-muted:#858d88;
+  --angel-faint:#5e6762;
+  --angel-sage:#a8bdad;
+  --angel-sage-strong:#c6d6ca;
+  --angel-warm:#c9ad86;
+  --angel-line:rgba(236,232,223,.075);
+  --angel-line-strong:rgba(236,232,223,.13);
+  --angel-radius:18px;
+  --angel-shadow:0 24px 70px rgba(0,0,0,.36);
+}
+
+html,body{background:var(--angel-bg)!important;color:var(--angel-paper)!important}
+body{
+  background:
+    radial-gradient(circle at 50% -18%,rgba(196,214,202,.055),transparent 30%),
+    radial-gradient(circle at 88% 105%,rgba(201,173,134,.035),transparent 25%),
+    var(--angel-bg)!important;
+}
+
+.sidebar{
+  width:246px!important;
+  padding:20px 14px!important;
+  background:rgba(10,13,12,.94)!important;
+  border-right:1px solid var(--angel-line)!important;
+  backdrop-filter:blur(18px)!important;
+}
+.app{grid-template-columns:246px minmax(0,1fr)!important}
+.main{grid-column:2!important}
+
+.brand{height:58px!important;margin-bottom:12px!important}
+.brandName{color:var(--angel-paper)!important;font-size:23px!important;letter-spacing:-.01em!important}
+.brandSub{color:var(--angel-faint)!important;letter-spacing:.16em!important}
+
+.newChat{
+  background:rgba(198,214,202,.055)!important;
+  border:1px solid var(--angel-line-strong)!important;
+  color:var(--angel-paper)!important;
+  box-shadow:none!important;
+}
+.newChat:hover{background:rgba(198,214,202,.085)!important;border-color:rgba(198,214,202,.22)!important;transform:none!important}
+
+.nav{margin-top:20px!important;gap:3px!important}
+.navBtn{color:var(--angel-muted)!important}
+.navBtn:hover,.navBtn.active{background:rgba(236,232,223,.042)!important;color:var(--angel-paper)!important}
+.navBtn.active{box-shadow:inset 2px 0 0 var(--angel-sage)!important}
+.navIcon,.navBtn.active .navIcon{color:var(--angel-muted)!important}
+.navBtn.active .navIcon{color:var(--angel-sage-strong)!important}
+
+.account{border-top:1px solid var(--angel-line)!important}
+.avatar{background:rgba(198,214,202,.075)!important;border-color:var(--angel-line-strong)!important;color:var(--angel-paper)!important}
+
+.topbar{
+  height:64px!important;
+  padding:0 30px!important;
+  background:rgba(11,13,12,.84)!important;
+  border-bottom:1px solid var(--angel-line)!important;
+}
+.statusDot{background:var(--angel-sage)!important;box-shadow:0 0 0 4px rgba(168,189,173,.055)!important}
+.crumb{color:var(--angel-muted)!important}
+.topBtn{border-color:var(--angel-line)!important;color:var(--angel-muted)!important}
+.topBtn:hover{border-color:var(--angel-line-strong)!important;background:rgba(236,232,223,.035)!important;color:var(--angel-paper)!important}
+
+.page{max-width:1180px!important;padding:34px 38px 176px!important}
+.welcome{min-height:calc(100vh - 245px)!important}
+.welcomeKicker,.sectionEyebrow{color:var(--angel-sage-strong)!important}
+.welcome h1{color:var(--angel-paper)!important}
+.welcome h1 em{color:#c9c1b4!important}
+.welcome p{color:var(--angel-muted)!important}
+.heroFoot{color:var(--angel-faint)!important}
+
+.capGrid{gap:10px!important;margin-top:38px!important}
+.capCard{
+  min-height:142px!important;
+  background:rgba(236,232,223,.018)!important;
+  border:1px solid var(--angel-line)!important;
+  border-radius:16px!important;
+  box-shadow:none!important;
+}
+.capCard:hover{
+  transform:translateY(-2px)!important;
+  background:rgba(236,232,223,.032)!important;
+  border-color:var(--angel-line-strong)!important;
+  box-shadow:none!important;
+}
+.capIcon{background:rgba(168,189,173,.055)!important;border-color:rgba(168,189,173,.10)!important;color:var(--angel-sage-strong)!important}
+.capCard small{color:var(--angel-faint)!important}
+
+.workspace{padding-top:10px!important}
+.pageTitle{color:var(--angel-paper)!important}
+.lede{color:var(--angel-muted)!important}
+
+.msg{padding:28px 0!important;border-bottom:1px solid var(--angel-line)!important}
+.msgRole{color:var(--angel-faint)!important}
+.msg.assistant .msgRole{color:var(--angel-sage-strong)!important}
+.msgText{color:#e8e5de!important}
+.msg.user .msgText{color:#c2c6c1!important}
+.mini{border-color:var(--angel-line)!important;color:var(--angel-muted)!important}
+.mini:hover{background:rgba(236,232,223,.035)!important;color:var(--angel-paper)!important}
+.providerLine{color:var(--angel-faint)!important}
+.source{border-color:var(--angel-line)!important;background:rgba(236,232,223,.014)!important;color:var(--angel-soft)!important}
+.source:hover{border-color:var(--angel-line-strong)!important;color:var(--angel-paper)!important}
+
+.activity{color:var(--angel-muted)!important}
+.activityTrace{background:var(--angel-line-strong)!important}
+.activityTrace:after{background:linear-gradient(90deg,transparent,var(--angel-sage),transparent)!important}
+
+.composer{
+  left:246px!important;
+  padding:18px 28px 14px!important;
+  background:linear-gradient(transparent,rgba(11,13,12,.97) 34%,var(--angel-bg) 100%)!important;
+}
+.composerBox{
+  background:rgba(17,21,19,.96)!important;
+  border:1px solid var(--angel-line-strong)!important;
+  border-radius:19px!important;
+  box-shadow:var(--angel-shadow)!important;
+}
+.composerBox:focus-within{border-color:rgba(168,189,173,.30)!important;box-shadow:0 20px 70px rgba(0,0,0,.42),0 0 0 3px rgba(168,189,173,.028)!important}
+.toolBtn{background:rgba(236,232,223,.018)!important;border-color:var(--angel-line)!important;color:var(--angel-muted)!important;box-shadow:none!important}
+.toolBtn:hover,.toolBtn.active{background:rgba(168,189,173,.055)!important;border-color:rgba(168,189,173,.20)!important;color:var(--angel-paper)!important;box-shadow:none!important}
+.toolState,.composerHint{color:var(--angel-faint)!important}
+.send{background:var(--angel-sage-strong)!important;color:#152018!important;box-shadow:none!important}
+.send:hover{transform:translateY(-1px)!important;box-shadow:0 8px 22px rgba(168,189,173,.10)!important}
+
+.listItem,.feature,.modelCard{
+  background:rgba(236,232,223,.016)!important;
+  border-color:var(--angel-line)!important;
+  box-shadow:none!important;
+}
+.listItem:hover,.feature:hover,.modelCard:hover{background:rgba(236,232,223,.027)!important;border-color:var(--angel-line-strong)!important;transform:none!important}
+
+.intelPulse{border-color:var(--angel-line)!important;color:var(--angel-muted)!important}
+.intelPulse span{background:var(--angel-sage)!important;box-shadow:none!important}
+.modelKind{color:var(--angel-sage-strong)!important}
+.connected .modelStatus{color:var(--angel-sage-strong)!important}
+
+/* Agent Lab: quiet workspace, not a control room. */
+.agentLab{max-width:1120px!important;padding:22px 0 120px!important}
+.agentHero{grid-template-columns:1.35fr .65fr!important;gap:14px!important}
+.labCard{
+  background:rgba(236,232,223,.016)!important;
+  border:1px solid var(--angel-line)!important;
+  border-radius:18px!important;
+  box-shadow:none!important;
+}
+.labCard h1,.labCard h2,.labCard h3{color:var(--angel-paper)!important}
+.labMuted{color:var(--angel-muted)!important}
+.labSectionTitle{color:var(--angel-faint)!important;letter-spacing:.14em!important}
+.labBadge{background:rgba(168,189,173,.045)!important;color:var(--angel-soft)!important;border:1px solid rgba(168,189,173,.075)!important}
+.labInput{background:#0e1210!important;border-color:var(--angel-line)!important;color:var(--angel-paper)!important}
+.labInput:focus{border-color:rgba(168,189,173,.23)!important}
+.labBtn{background:#141916!important;border-color:var(--angel-line)!important;color:var(--angel-soft)!important}
+.labBtn:hover{background:#181e1b!important;border-color:var(--angel-line-strong)!important}
+.labBtn.primary{background:var(--angel-sage-strong)!important;color:#142019!important;border-color:var(--angel-sage-strong)!important}
+.labItem{background:rgba(236,232,223,.012)!important;border-color:var(--angel-line)!important}
+.labDanger{border-color:rgba(201,132,118,.20)!important}
+
+/* New Agent Lab zones */
+.agentLab .labOverview{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:14px 0 20px}
+.agentLab .labMetric{padding:15px;border:1px solid var(--angel-line);border-radius:15px;background:rgba(236,232,223,.013)}
+.agentLab .labMetric b{display:block;font:400 24px/1 Newsreader,Georgia,serif;color:var(--angel-paper)}
+.agentLab .labMetric span{display:block;margin-top:6px;font-size:9px;letter-spacing:.10em;text-transform:uppercase;color:var(--angel-faint)}
+.agentLab .labRun{display:grid;grid-template-columns:1.1fr .9fr;gap:14px}
+.agentLab .labTimeline{display:grid;gap:8px;margin-top:11px}
+.agentLab .labStep{display:grid;grid-template-columns:26px minmax(0,1fr) auto;gap:10px;align-items:start;padding:11px 12px;border:1px solid var(--angel-line);border-radius:12px;background:rgba(236,232,223,.012)}
+.agentLab .labStepMark{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;border:1px solid rgba(168,189,173,.16);color:var(--angel-sage-strong);font-size:9px}
+.agentLab .labStep small{display:block;color:var(--angel-faint);margin-top:3px}
+.agentLab .labStepState{font-size:8px;letter-spacing:.10em;text-transform:uppercase;color:var(--angel-muted)}
+.agentLab .labFilters{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:11px}
+.agentLab .labFilter{padding:7px 9px;border-radius:999px;border:1px solid var(--angel-line);background:transparent;color:var(--angel-muted);font-size:9px;cursor:pointer}
+.agentLab .labFilter.active{background:rgba(168,189,173,.06);color:var(--angel-paper);border-color:rgba(168,189,173,.18)}
+.agentLab .labQuietLine{height:1px;background:var(--angel-line);margin:18px 0}
+.agentLab .labEmpty{padding:17px 0;color:var(--angel-faint);font-size:11px}
+.agentLab .labCheck{width:7px;height:7px;border-radius:50%;background:var(--angel-sage);display:inline-block;margin-right:7px}
+
+@media(max-width:900px){
+  .sidebar{width:224px!important}
+  .app{grid-template-columns:224px minmax(0,1fr)!important}
+  .composer{left:224px!important}
+  .agentHero,.agentLab .labRun{grid-template-columns:1fr!important}
+  .agentLab .labOverview{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:720px){
+  .sidebar{display:none!important}
+  .app{grid-template-columns:1fr!important}
+  .main{grid-column:1!important}
+  .composer{left:0!important;padding:14px 14px 11px!important}
+  .page{padding:24px 16px 170px!important}
+  .capGrid,.modelGrid,.exploreGrid{grid-template-columns:1fr 1fr!important}
+  .agentLab .labOverview{grid-template-columns:1fr 1fr}
+}
+@media(max-width:480px){
+  .capGrid,.modelGrid,.exploreGrid{grid-template-columns:1fr!important}
+  .sourceGrid{grid-template-columns:1fr!important}
+}

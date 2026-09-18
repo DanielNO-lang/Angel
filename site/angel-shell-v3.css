@@ -59,3 +59,33 @@ html,body,#page,.page,.main,.app,
 .aSidebarScroll{overscroll-behavior:contain}
 .aSidebarQuote,.aUser,.sidebarFixedTop{flex:0 0 auto}
 @media(max-width:980px){.aHomeGrid{grid-template-columns:1fr!important}}
+
+
+/* Final approved website polish */
+html,body,button,input,textarea,select{
+  font-family:"Newsreader",Georgia,serif!important;
+}
+.aNavIcon,.aSearchBtn>span:first-child,.aNewChat .plus,.aCollapse,.aRecentToggle,
+.aChatMore,.aTopBtn,.aActionIcon,.aLabBannerIcon,.aFileIcon,.aActivityIcon{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+.aNavIcon svg,.aSearchBtn svg{
+  width:17px!important;
+  height:17px!important;
+  display:block;
+  stroke:currentColor;
+  fill:none;
+  stroke-width:1.8;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.aSearchBtn>span:first-child svg{width:16px!important;height:16px!important}
+.aGreetingWrap{flex:1;min-width:0;width:100%}
+.aGreeting{width:100%!important;display:block!important}
+.aHomeHead{width:100%!important}
+.aHomeHead>div:first-child{flex:1;min-width:0}
+.aNewChat{font-family:"Newsreader",Georgia,serif!important}
+.aNewChat .plus{width:17px;height:17px}
+.aBrandSub{letter-spacing:.08em!important}

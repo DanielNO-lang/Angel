@@ -5,7 +5,21 @@ const KEY="sb_publishable_N5oJC6pzx87-z3pO8MgSwQ_djYeX8o9";
 const sb=createClient(URL,KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
-const icons={home:"⌂",agent:"✦",tasks:"✓",memory:"◉",files:"▣",multi:"◌",tools:"⌘",assistant:"◎",market:"▤",charts:"◫",search:"⌕",more:"⋯"};
+const svg=(d)=>'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="'+d+'"></path></svg>';
+const icons={
+ home:svg("M3 10.8 12 3l9 7.8v9.2a1 1 0 0 1-1 1h-5.5v-6.5h-5V21H4a1 1 0 0 1-1-1z"),
+ agent:svg("M12 2.8l1.9 5.3L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"),
+ tasks:svg("M6 3.8h12v16.4H6zM9 7.5h6M9 11.5h6M9 15.5h4"),
+ memory:svg("M12 4.2a7.8 7.8 0 1 0 0 15.6 7.8 7.8 0 0 0 0-15.6zm0 3.2v4.8l3.1 2"),
+ files:svg("M5 3.5h9l5 5v12H5zM14 3.5v5h5"),
+ multi:svg("M6 7.2a5.8 5.8 0 1 0 11.6 0A5.8 5.8 0 0 0 6 7.2zm-2 9.6a4 4 0 0 1 8 0m4-2.2a3.5 3.5 0 0 1 4 2.2"),
+ tools:svg("M14.7 5.1a4.3 4.3 0 0 0-5.6 5.6L4 15.8 8.2 20l5.1-5.1a4.3 4.3 0 0 0 5.6-5.6l-2.5 2.5-3.2-3.2z"),
+ assistant:svg("M12 3.5a8.5 8.5 0 1 0 0 17 8.5 8.5 0 0 0 0-17zm0 4v5l3 1.8"),
+ market:svg("M4 5h16v14H4zM7 8h10M7 12h7M7 16h5"),
+ charts:svg("M5 19V9m7 10V5m7 14v-7"),
+ search:svg("M10.8 4.5a6.3 6.3 0 1 0 0 12.6 6.3 6.3 0 0 0 0-12.6zm4.7 11.3 4 4"),
+ more:svg("M5 12h.01M12 12h.01M19 12h.01")
+};
 let theme=localStorage.getItem("angel.theme")||"dark";
 let recentsMin=localStorage.getItem("angel.recentsCollapsed")==="1";
 
@@ -19,14 +33,14 @@ function buildSidebar(){
  const s=$("#sidebar");if(!s)return;
  s.innerHTML=
  '<div class="sidebarFixedTop">'+
- '<div class="aBrandRow"><span class="angelLogo small"><img src="/angel-logo.svg" alt="Angel"></span><div class="aBrandCopy"><div class="aBrandName">Angel</div><div class="aBrandSub">private intelligence</div></div><button class="aCollapse" id="sidebarCollapse" title="Expand or collapse sidebar"><span>‹</span></button></div>'+
+ '<div class="aBrandRow"><span class="angelLogo small"><img src="/angel-logo.svg" alt="Angel"></span><div class="aBrandCopy"><div class="aBrandName">Angel</div><div class="aBrandSub">personal assistant</div></div><button class="aCollapse" id="sidebarCollapse" title="Expand or collapse sidebar"><span>‹</span></button></div>'+
  '<div class="aSearchWrap" id="chatSearchWrap"><button class="aSearchBtn" id="chatSearchOpen"><span>'+icons.search+'</span><span class="label">Search chats</span><small>⌘K</small></button><input class="aSearchInput" id="chatSearchInput" placeholder="Search chats, files, memories…" autocomplete="off"><div class="aSearchPopover" id="chatSearchPopover"></div></div>'+
  '<button class="aNewChat" id="v3NewChat"><span class="plus">＋</span><span class="label">New chat</span></button></div>'+
  '<div class="aSidebarScroll"><div class="aSectionLabel">Workspace</div><nav class="aNav">'+
  nav("v3HomeNav",icons.home,"Home")+nav("agentLabNav",icons.agent,"Agent Lab")+nav("v3TasksNav",icons.tasks,"Tasks")+nav("v3MemoryNav",icons.memory,"Memories")+nav("v3FilesNav",icons.files,"Files & documents")+nav("v3MultiNav",icons.multi,"Multimodal")+nav("v3ToolsNav",icons.tools,"Tools")+nav("v3AssistantsNav",icons.assistant,"Assistants")+nav("v3MarketNav",icons.market,"Marketplace")+nav("v3ChartsNav",icons.charts,"Charts")+
  '</nav><div class="aRecentHead"><b>Recents</b><button class="aRecentToggle" id="recentToggle" title="Minimize recent chats">⌃</button></div><div id="aRecentList" class="aRecentList"></div></div>'+
  '<div class="aSidebarQuote"><div class="aQuote"><p>“Not just a tool, but a partner in your journey.”</p><small>ANGEL</small></div></div>'+
- '<div class="aUser" id="aUser"><button class="aUserBtn" id="v3SideUser"><span class="aAvatar">A</span><span class="aUserCopy"><span class="aUserName">Angel user</span><span class="aUserPlan">Free plan</span></span><span class="aUserChevron">⌄</span></button><div class="aUserMenu" id="aUserMenu"></div></div>'+
+ '<div class="aUser" id="aUser"><button class="aUserBtn" id="v3SideUser"><span class="aAvatar">D</span><span class="aUserCopy"><span class="aUserName">Danny</span><span class="aUserPlan">Free plan</span></span><span class="aUserChevron">⌄</span></button><div class="aUserMenu" id="aUserMenu"></div></div>'+
  '<div class="aLegacyHooks"><button id="sideUser"></button><button id="newChat"></button><button id="angelNav"></button><button id="historyNav"></button><button id="exploreNav"></button><button id="intelligenceNav"></button><button id="projectsNav"></button><button id="settingsNav"></button><button id="sideAuth"></button><button id="authBtn"></button></div>';
 }
 
@@ -89,14 +103,13 @@ function renderHome(){
  '<div class="aPanel" style="margin-top:12px"><div class="aPanelHead"><h2>What would you like to do?</h2><span>Quick actions</span></div><div class="aActionGrid">'+
  '<button class="aAction" data-action="chat"><div class="aActionIcon">◌</div><b>Chat</b><small>Have a conversation with Angel</small></button><button class="aAction" data-action="image"><div class="aActionIcon">▧</div><b>Create image</b><small>Turn an idea into an image</small></button><button class="aAction" data-action="video"><div class="aActionIcon">▷</div><b>Create video</b><small>Turn your idea into video</small></button><button class="aAction" data-action="research"><div class="aActionIcon">⌕</div><b>Web search</b><small>Research the live web</small></button><button class="aAction" data-action="x"><div class="aActionIcon">𝕏</div><b>Live search</b><small>Search live signals</small></button><button class="aAction" data-action="agent"><div class="aActionIcon">✦</div><b>Run agent</b><small>Let Angel work through a task</small></button><button class="aAction" data-action="assistant"><div class="aActionIcon">◎</div><b>Custom assistant</b><small>Create a reusable Angel</small></button><button class="aAction" data-view="market"><div class="aActionIcon">▤</div><b>Marketplace</b><small>Discover reusable assistants</small></button>'+
  '</div></div><div class="aLabBanner"><div class="aLabBannerIcon">✦</div><div class="aLabBannerCopy"><b>Agent Lab</b><span>Run agents, review traces, tasks, approvals, skills and assistants.</span></div><button class="aLabOpen" id="homeAgentLab">Open Agent Lab</button></div>'+
- '<div class="aPanel" style="margin-top:12px"><div class="aPanelHead"><h2>Recent conversations</h2><span>Recents</span></div><div class="aRecentHome">'+recentData().slice(0,5).map(x=>'<button class="aHomeChat" data-chat="'+x.id+'"><span>◷</span><span><b>'+esc(x.t)+'</b><small>'+x.m+'</small></span></button>').join("")+'</div></div></div>'+
  '<div><div class="aPanel"><div class="aPanelHead"><h2>Recent activity</h2><span>Live</span></div><div class="aActivityList"><div class="aActivity"><div class="aActivityIcon">▧</div><div><b>Image generated</b><span>A scenic concept · 2m ago</span></div></div><div class="aActivity"><div class="aActivityIcon">▷</div><div><b>Video created</b><span>Project demo · 12m ago</span></div></div><div class="aActivity"><div class="aActivityIcon">✓</div><div><b>Task completed</b><span>Research follow-up · 18m ago</span></div></div><div class="aActivity"><div class="aActivityIcon">◎</div><div><b>Assistant installed</b><span>Research Scout · 1h ago</span></div></div></div></div>'+
  '<div class="aPanel" style="margin-top:12px"><div class="aPanelHead"><h2>Quick access</h2><span>Workspace</span></div><div class="aList"><button class="aListRow" data-view="tasks"><b>Tasks & schedules</b><span>›</span></button><button class="aListRow" data-view="files"><b>Stored files & documents</b><span>›</span></button><button class="aListRow" data-view="memory"><b>Memories</b><span>›</span></button><button class="aListRow" data-view="tools"><b>Plugins · Connectors · Skills</b><span>›</span></button></div></div></div></div></div>';
  $("#page").innerHTML=body;active("v3HomeNav");
  $("#page").querySelectorAll("[data-action]").forEach(b=>b.onclick=()=>homeAction(b.dataset.action));
  $("#page").querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>go(b.dataset.view));
  $("#page").querySelectorAll(".aHomeChat").forEach(b=>b.onclick=()=>toast("Recent conversation selected"));
- $("#homeAgentLab")?.addEventListener("click",()=>$("#agentLabNav")?.click());
+ $("#homeAgentLab")?.addEventListener("click",()=>window.dispatchEvent(new Event("angel-agent-lab-open")));
 }
 function homeAction(a){if(a==="agent"){$("#agentLabNav")?.click();return}if(a==="assistant"){renderAssistants();return}if(a==="chat"){ $("#newChat")?.click();return}const m=$("#message");if(!m)return;const p={image:"Create an image based on this idea: ",video:"Create a video based on this idea: ",research:"Research this topic deeply and cite the important sources: ",x:"Search live social signals about: "}[a]||"";m.value=p;m.focus();m.dispatchEvent(new Event("input"));toast("Ready in the composer")}
 function go(v){if(v==="tasks")renderTasks();if(v==="memory")renderMemory();if(v==="files")renderFiles();if(v==="tools")renderTools();if(v==="assistants")renderAssistants();if(v==="market")renderMarket();if(v==="charts")renderCharts();if(v==="recents")renderRecentsPage()}
@@ -117,7 +130,7 @@ function init(){
  document.documentElement.dataset.theme=theme;buildSidebar();buildTopbar();
  if(localStorage.getItem("angel.sidebarCollapsed")==="1"){toggleSidebar()}
  $("#sidebarCollapse").onclick=toggleSidebar;$("#v3NewChat").onclick=()=>$("#newChat")?.click();
- $("#v3HomeNav").onclick=()=>{renderHome()};$("#v3TasksNav").onclick=renderTasks;$("#v3MemoryNav").onclick=renderMemory;$("#v3FilesNav").onclick=renderFiles;$("#v3MultiNav").onclick=renderMultimodal;$("#v3ToolsNav").onclick=renderTools;$("#v3AssistantsNav").onclick=renderAssistants;$("#v3MarketNav").onclick=renderMarket;$("#v3ChartsNav").onclick=renderCharts;
+ $("#v3HomeNav").onclick=()=>{renderHome()};$("#agentLabNav").onclick=()=>window.dispatchEvent(new Event("angel-agent-lab-open"));$("#v3TasksNav").onclick=renderTasks;$("#v3MemoryNav").onclick=renderMemory;$("#v3FilesNav").onclick=renderFiles;$("#v3MultiNav").onclick=renderMultimodal;$("#v3ToolsNav").onclick=renderTools;$("#v3AssistantsNav").onclick=renderAssistants;$("#v3MarketNav").onclick=renderMarket;$("#v3ChartsNav").onclick=renderCharts;
  $("#v3SideUser").onclick=async()=>{const u=$("#aUser");u.classList.toggle("is-open");if(u.classList.contains("is-open"))await renderUserMenu(true)};
  $("#recentToggle").onclick=()=>{recentsMin=!recentsMin;localStorage.setItem("angel.recentsCollapsed",recentsMin?"1":"0");renderRecents()};
  $("#chatSearchOpen").onclick=()=>{const w=$("#chatSearchWrap");w.classList.add("open");$("#chatSearchInput").focus();searchList("")};

@@ -23,3 +23,39 @@ html,body{background:var(--a-bg)!important;color:var(--a-text)!important}body{ov
 .aExtTabs{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:13px}.aExtTab{padding:12px;border:1px solid var(--a-line);background:var(--a-panel);border-radius:12px;text-align:left;color:var(--a-text);cursor:pointer}.aExtTab.active{background:var(--a-panel-2);border-color:var(--a-line-strong)}.aExtTab b{display:block;font-size:11px}.aExtTab span{display:block;font-size:8px;color:var(--a-faint);margin-top:4px}
 .aSettingGrid{display:grid;grid-template-columns:220px minmax(0,1fr);gap:12px}.aSettingNav,.aSettingContent{padding:10px;border:1px solid var(--a-line);background:var(--a-panel);border-radius:13px}.aSettingNav button{width:100%;padding:9px;border:0;background:transparent;color:var(--a-muted);text-align:left;border-radius:8px;cursor:pointer;font-size:9px}.aSettingNav button:hover,.aSettingNav button.active{background:var(--a-panel-2);color:var(--a-text)}.aSettingContent h3{font:500 20px/1 Newsreader,Georgia,serif;margin:2px 0 7px}.aSettingContent p{font-size:10px;color:var(--a-muted);line-height:1.55}.aToggle{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--a-line);font-size:10px}.aToggle:last-child{border-bottom:0}.aSwitch{width:36px;height:20px;border-radius:999px;border:1px solid var(--a-line-strong);background:var(--a-panel-2);position:relative;cursor:pointer}.aSwitch:after{content:"";position:absolute;top:3px;left:3px;width:12px;height:12px;border-radius:50%;background:var(--a-muted)}.aSwitch.on{background:var(--a-text)}.aSwitch.on:after{left:19px;background:var(--a-bg)}.aEmpty{padding:30px;text-align:center;border:1px dashed var(--a-line-strong);border-radius:13px;color:var(--a-muted);font-size:10px}.aContextMenu{position:fixed;min-width:170px;display:none;padding:6px;background:var(--a-panel);border:1px solid var(--a-line-strong);border-radius:10px;box-shadow:var(--a-shadow);z-index:200}.aContextMenu.open{display:block}.aContextMenu button{width:100%;padding:8px;border:0;background:transparent;color:var(--a-soft);text-align:left;border-radius:7px;font-size:9px;cursor:pointer}.aContextMenu button:hover{background:var(--a-panel-2)}.aContextMenu .danger{color:var(--a-danger)}
 @media(max-width:980px){.aHomeGrid,.aTwoCol{grid-template-columns:1fr}.aActionGrid{grid-template-columns:repeat(2,1fr)}.aCards{grid-template-columns:repeat(2,1fr)}}@media(max-width:760px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.main{margin-left:0!important}.topbar,body.sidebar-collapsed .topbar{left:0!important;padding:0 12px!important}.composer,body.sidebar-collapsed .composer{left:0!important;padding-left:12px!important;padding-right:12px!important}.page{padding:20px 15px 145px!important}.aTopSearch{width:52vw}.aCards{grid-template-columns:1fr}}
+
+/* Approved Angel design refinements */
+html,body,#page,.page,.main,.app,
+.aBrandName,.aBrandSub,.aNavBtn,.aSearchBtn,.aSearchInput,.aNewChat,
+.aSectionLabel,.aRecentHead,.aChatTitle,.aChatMeta,.aMenuItem,.aUserName,
+.aUserPlan,.aTopBtn,.aTopSearch input,.aStatus,.aPanelHead span,.aQuickTool,
+.aAction b,.aAction small,.aActivity b,.aActivity span,.aLabBannerCopy b,
+.aLabBannerCopy span,.aLabOpen,.aSectionIntro,.aListRow,.aCard,.aExtTab,
+.aSettingNav button,.aSettingContent p,.aToggle,.aContextMenu button{
+  font-family:"Newsreader",Georgia,serif!important;
+}
+.aNewChat{
+  height:35px!important;
+  border:0!important;
+  background:transparent!important;
+  color:var(--a-muted)!important;
+  font-weight:400!important;
+  border-radius:9px!important;
+}
+.aNewChat:hover{
+  background:var(--a-panel-2)!important;
+  color:var(--a-text)!important;
+  opacity:1!important;
+}
+.aNewChat .plus{color:var(--a-muted)!important;font-size:14px!important}
+.aSearchBtn small{opacity:0!important;transition:opacity .16s ease}
+.aSearchBtn:hover small,.aSearchWrap.open .aSearchBtn small{opacity:1!important}
+.aHomeHead{align-items:center!important;margin-bottom:22px!important}
+.aGreetingWrap{flex:1;min-width:0}
+.aGreeting{width:100%!important}
+.aStatusDot{background:var(--a-accent)!important;box-shadow:none!important}
+.aNavBtn.active{background:var(--a-panel-2)!important;box-shadow:none!important}
+.aAction:hover,.aQuickTool:hover,.aHomeChat:hover,.aListRow:hover{box-shadow:none!important}
+.aSidebarScroll{overscroll-behavior:contain}
+.aSidebarQuote,.aUser,.sidebarFixedTop{flex:0 0 auto}
+@media(max-width:980px){.aHomeGrid{grid-template-columns:1fr!important}}

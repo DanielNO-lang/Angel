@@ -26,8 +26,8 @@ function buildSidebar(){
  nav("v3HomeNav",icons.home,"Home")+nav("agentLabNav",icons.agent,"Agent Lab")+nav("v3TasksNav",icons.tasks,"Tasks")+nav("v3MemoryNav",icons.memory,"Memories")+nav("v3FilesNav",icons.files,"Files & documents")+nav("v3MultiNav",icons.multi,"Multimodal")+nav("v3ToolsNav",icons.tools,"Tools")+nav("v3AssistantsNav",icons.assistant,"Assistants")+nav("v3MarketNav",icons.market,"Marketplace")+nav("v3ChartsNav",icons.charts,"Charts")+
  '</nav><div class="aRecentHead"><b>Recents</b><button class="aRecentToggle" id="recentToggle" title="Minimize recent chats">⌃</button></div><div id="aRecentList" class="aRecentList"></div></div>'+
  '<div class="aSidebarQuote"><div class="aQuote"><p>“Not just a tool, but a partner in your journey.”</p><small>ANGEL</small></div></div>'+
- '<div class="aUser" id="aUser"><button class="aUserBtn" id="sideUser"><span class="aAvatar">A</span><span class="aUserCopy"><span class="aUserName">Angel user</span><span class="aUserPlan">Free plan</span></span><span class="aUserChevron">⌄</span></button><div class="aUserMenu" id="aUserMenu"></div></div>'+
- '<div class="aLegacyHooks"><button id="newChat"></button><button id="angelNav"></button><button id="historyNav"></button><button id="exploreNav"></button><button id="intelligenceNav"></button><button id="projectsNav"></button><button id="settingsNav"></button><button id="sideAuth"></button><button id="authBtn"></button></div>';
+ '<div class="aUser" id="aUser"><button class="aUserBtn" id="v3SideUser"><span class="aAvatar">A</span><span class="aUserCopy"><span class="aUserName">Angel user</span><span class="aUserPlan">Free plan</span></span><span class="aUserChevron">⌄</span></button><div class="aUserMenu" id="aUserMenu"></div></div>'+
+ '<div class="aLegacyHooks"><button id="sideUser"></button><button id="newChat"></button><button id="angelNav"></button><button id="historyNav"></button><button id="exploreNav"></button><button id="intelligenceNav"></button><button id="projectsNav"></button><button id="settingsNav"></button><button id="sideAuth"></button><button id="authBtn"></button></div>';
 }
 
 function buildTopbar(){
@@ -118,7 +118,7 @@ function init(){
  if(localStorage.getItem("angel.sidebarCollapsed")==="1"){toggleSidebar()}
  $("#sidebarCollapse").onclick=toggleSidebar;$("#v3NewChat").onclick=()=>$("#newChat")?.click();
  $("#v3HomeNav").onclick=()=>{renderHome()};$("#v3TasksNav").onclick=renderTasks;$("#v3MemoryNav").onclick=renderMemory;$("#v3FilesNav").onclick=renderFiles;$("#v3MultiNav").onclick=renderMultimodal;$("#v3ToolsNav").onclick=renderTools;$("#v3AssistantsNav").onclick=renderAssistants;$("#v3MarketNav").onclick=renderMarket;$("#v3ChartsNav").onclick=renderCharts;
- $("#sideUser").onclick=async()=>{const u=$("#aUser");u.classList.toggle("is-open");if(u.classList.contains("is-open"))await renderUserMenu(true)};
+ $("#v3SideUser").onclick=async()=>{const u=$("#aUser");u.classList.toggle("is-open");if(u.classList.contains("is-open"))await renderUserMenu(true)};
  $("#recentToggle").onclick=()=>{recentsMin=!recentsMin;localStorage.setItem("angel.recentsCollapsed",recentsMin?"1":"0");renderRecents()};
  $("#chatSearchOpen").onclick=()=>{const w=$("#chatSearchWrap");w.classList.add("open");$("#chatSearchInput").focus();searchList("")};
  $("#chatSearchInput").oninput=e=>searchList(e.target.value);$("#chatSearchInput").onkeydown=e=>{if(e.key==="Escape")$("#chatSearchWrap").classList.remove("open")};
@@ -131,7 +131,7 @@ function init(){
  $("#aRecentList").onclick=e=>{const m=e.target.closest("[data-more]");if(m){e.stopPropagation();chatMenu(m.dataset.more,m);return}const r=e.target.closest("[data-chat]");if(r)toast("Opening "+r.querySelector(".aChatTitle").textContent)};
  document.addEventListener("click",e=>{if(!e.target.closest("#aUser"))$("#aUser")?.classList.remove("is-open");if(!e.target.closest("#chatMoreWrap"))$("#chatMoreWrap")?.classList.remove("open")});
  window.addEventListener("angel-refresh-recents",renderRecents);
- renderRecents();renderHome();
+ renderRecents();renderHome();const obs=new MutationObserver(()=>{if($("#page .welcome"))renderHome()});obs.observe($("#page"),{childList:true});
 }
 function searchList(q){const p=$("#chatSearchPopover");if(!p)return;const rows=recentData().filter(x=>!q||x.t.toLowerCase().includes(q.toLowerCase()));p.innerHTML='<div class="aSearchPopTitle">'+(q?"Search results":"Recent searches")+'</div>'+rows.map(x=>'<button class="aSearchResult"><b>'+esc(x.t)+'</b><span>Recent chat · '+x.m+'</span></button>').join("")+(rows.length?"":"<div style='padding:10px;color:var(--a-faint);font-size:9px'>No matching chats.</div>")}
 init();

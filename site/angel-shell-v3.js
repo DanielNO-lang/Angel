@@ -135,3 +135,32 @@ function init(){
 }
 function searchList(q){const p=$("#chatSearchPopover");if(!p)return;const rows=recentData().filter(x=>!q||x.t.toLowerCase().includes(q.toLowerCase()));p.innerHTML='<div class="aSearchPopTitle">'+(q?"Search results":"Recent searches")+'</div>'+rows.map(x=>'<button class="aSearchResult"><b>'+esc(x.t)+'</b><span>Recent chat · '+x.m+'</span></button>').join("")+(rows.length?"":"<div style='padding:10px;color:var(--a-faint);font-size:9px'>No matching chats.</div>")}
 init();
+
+/* Approved design behavior */
+function applyApprovedDesign(){
+  const brandSub=document.querySelector(".aBrandSub");
+  if(brandSub) brandSub.textContent="personal assistant";
+  const avatar=document.querySelector(".aAvatar");
+  if(avatar) avatar.textContent="D";
+  const userName=document.querySelector(".aUserName");
+  if(userName && (userName.textContent==="Angel user" || !userName.textContent.trim())) userName.textContent="Danny";
+  const greetingSub=document.querySelector(".aGreetingSub");
+  if(greetingSub) greetingSub.remove();
+  document.querySelectorAll(".aHomeGrid .aRecentHome").forEach(x=>x.closest(".aPanel")?.remove());
+  document.querySelectorAll(".aHomeGrid .aHomeChat").forEach(x=>x.closest(".aPanel")?.remove());
+  const status=document.querySelector(".aStatus");
+  if(status){
+    const dot=status.querySelector(".aStatusDot");
+    if(dot) dot.style.boxShadow="none";
+    status.lastChild.textContent="Online / offline";
+  }
+  const searchBtn=document.querySelector(".aSearchBtn");
+  if(searchBtn){
+    searchBtn.title="Search chats";
+    const hint=searchBtn.querySelector("small");
+    if(hint) hint.style.opacity="";
+  }
+}
+const approvedDesignObserver=new MutationObserver(()=>applyApprovedDesign());
+approvedDesignObserver.observe(document.body,{childList:true,subtree:true});
+setTimeout(applyApprovedDesign,0);

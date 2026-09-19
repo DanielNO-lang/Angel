@@ -1,183 +1,160 @@
-
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-const URL="https://ybvyveonfvixsfusoqqz.supabase.co";
-const KEY="sb_publishable_N5oJC6pzx87-z3pO8MgSwQ_djYeX8o9";
-const sb=createClient(URL,KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
-const $=s=>document.querySelector(s);
-const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
-const svg=(d)=>'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="'+d+'"></path></svg>';
-const icons={
- home:svg("M3 10.8 12 3l9 7.8v9.2a1 1 0 0 1-1 1h-5.5v-6.5h-5V21H4a1 1 0 0 1-1-1z"),
- agent:svg("M12 2.8l1.9 5.3L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"),
- tasks:svg("M6 3.8h12v16.4H6zM9 7.5h6M9 11.5h6M9 15.5h4"),
- memory:svg("M12 4.2a7.8 7.8 0 1 0 0 15.6 7.8 7.8 0 0 0 0-15.6zm0 3.2v4.8l3.1 2"),
- files:svg("M5 3.5h9l5 5v12H5zM14 3.5v5h5"),
- multi:svg("M6 7.2a5.8 5.8 0 1 0 11.6 0A5.8 5.8 0 0 0 6 7.2zm-2 9.6a4 4 0 0 1 8 0m4-2.2a3.5 3.5 0 0 1 4 2.2"),
- tools:svg("M14.7 5.1a4.3 4.3 0 0 0-5.6 5.6L4 15.8 8.2 20l5.1-5.1a4.3 4.3 0 0 0 5.6-5.6l-2.5 2.5-3.2-3.2z"),
- assistant:svg("M12 3.5a8.5 8.5 0 1 0 0 17 8.5 8.5 0 0 0 0-17zm0 4v5l3 1.8"),
- market:svg("M4 5h16v14H4zM7 8h10M7 12h7M7 16h5"),
- charts:svg("M5 19V9m7 10V5m7 14v-7"),
- search:svg("M10.8 4.5a6.3 6.3 0 1 0 0 12.6 6.3 6.3 0 0 0 0-12.6zm4.7 11.3 4 4"),
- more:svg("M5 12h.01M12 12h.01M19 12h.01")
+import {createClient} from "https://esm.sh/@supabase/supabase-js@2";
+const SUPABASE_URL="https://ybvyveonfvixsfusoqqz.supabase.co",SUPABASE_KEY="sb_publishable_N5oJC6pzx87-z3pO8MgSwQ_djYeX8o9";
+const sb5=createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",""":"&quot;","'":"&#039;"}[c]));
+const path={
+home:"M3 10.5 12 3l9 7.5v9.5a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z",
+chat:"M5 5h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H9l-4 3v-3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z",
+project:"M4 7h6l2 2h8v9H4z",
+schedule:"M7 3v4M17 3v4M4 8h16M5 5h14a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM8 12h3M8 15h6",
+library:"M5 4h13a1 1 0 0 1 1 1v15H7a2 2 0 0 1-2-2zM8 4v16",
+media:"M5 6h14v12H5zM9 10h6M9 14h4",
+assistant:"M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16zm-3 7 2 2 4-5",
+more:"M5 12h.01M12 12h.01M19 12h.01",
+pin:"M8 4h8l-2 5 3 3-5 1v7l-2-4-2 4v-7l-5-1 3-3z",
+archive:"M4 6h16v13H4zM3 6h18v-2H3zM9 10h6",
+mic:"M12 4a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V7a3 3 0 0 0-3-3zm-7 8a7 7 0 0 0 14 0m-7 7v3",
+voice:"M8 8.5a4 4 0 0 1 8 0v2a4 4 0 0 1-8 0zM5 11a7 7 0 0 0 14 0M12 18v3",
+video:"M4 6h12v12H4zM16 10l4-2v8l-4-2z",
+send:"M4 12 21 5l-5 14-3.5-5.5zM12.5 13.5 21 5",
+plus:"M12 5v14M5 12h14",
+moon:"M20 15.5A7.5 7.5 0 1 1 8.5 4 6 6 0 0 0 20 15.5",
+sun:"M12 4V2M12 22v-2M4 12H2M22 12h-2M5.6 5.6 4.2 4.2M19.8 19.8l-1.4-1.4M18.4 5.6l1.4-1.4M4.2 19.8l1.4-1.4M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10",
+device:"M4 5h16v12H4zM9 21h6M12 17v4",
+bell:"M18 9a6 6 0 0 0-12 0c0 7-3 7-3 8h18c0-1-3-1-3-8M10 21h4",
+search:"M7 6V5a2 2 0 0 1 4 0v6M7 8h-1a2 2 0 0 0 0 4h3M11 9h3l2 2M13 15h4M17 12v7M9 19h8",
+lock:"M7 11V8a5 5 0 0 1 10 0v3M5 11h14v10H5z",
+trash:"M5 7h14M9 7V4h6v3m-8 0 1 13h8l1-13",
+chart:"M5 19V9M12 19V5M19 19v-8",
+memory:"M12 4a8 8 0 1 0 0 16 8 8 0 0 0-8-8zm0 4v4l3 2",
+plug:"M8 12h8M10 5v4m4-4v4M7 13a5 5 0 0 0 10 0",
+image:"M4 5h16v14H4zM8 13l2-2 2 2 2-3 4 5H6z",
+doc:"M7 3h7l4 4v14H7zM14 3v5h5",
+agent:"M12 4l1.8 4.6L19 10.5l-5.2 1.8L12 17l-1.8-4.7L5 10.5l5.2-1.9z",
+redo:"M5 12a7 7 0 0 1 13-3M18 9V5m0 4h-4"
 };
-let theme=localStorage.getItem("angel.theme")||"dark";
-let recentsMin=localStorage.getItem("angel.recentsCollapsed")==="1";
-
-function toast(t){const x=$("#toast");if(x){x.textContent=t;x.classList.add("show");setTimeout(()=>x.classList.remove("show"),2200)}}
-function themeSet(t){theme=t;document.documentElement.dataset.theme=t;localStorage.setItem("angel.theme",t);renderUserMenu(false)}
-function sessionName(){return document.querySelector(".aUserName")?.textContent||"there"}
-function active(id){document.querySelectorAll(".aNavBtn").forEach(x=>x.classList.remove("active"));$("#"+id)?.classList.add("active")}
-function nav(id,i,label){return '<button class="aNavBtn" id="'+id+'"><span class="aNavIcon">'+i+'</span><span class="aNavLabel">'+label+'</span></button>'}
-
-function buildSidebar(){
- const s=$("#sidebar");if(!s)return;
- s.innerHTML=
- '<div class="sidebarFixedTop">'+
- '<div class="aBrandRow"><span class="angelLogo small"><img src="/angel-logo.svg" alt="Angel"></span><div class="aBrandCopy"><div class="aBrandName">Angel</div><div class="aBrandSub">personal assistant</div></div><button class="aCollapse" id="sidebarCollapse" title="Expand or collapse sidebar"><span>‹</span></button></div>'+
- '<div class="aSearchWrap" id="chatSearchWrap"><button class="aSearchBtn" id="chatSearchOpen"><span>'+icons.search+'</span><span class="label">Search chats</span><small>⌘K</small></button><input class="aSearchInput" id="chatSearchInput" placeholder="Search chats, files, memories…" autocomplete="off"><div class="aSearchPopover" id="chatSearchPopover"></div></div>'+
- '<button class="aNewChat" id="v3NewChat"><span class="plus">＋</span><span class="label">New chat</span></button></div>'+
- '<div class="aSidebarScroll"><div class="aSectionLabel">Workspace</div><nav class="aNav">'+
- nav("v3HomeNav",icons.home,"Home")+nav("agentLabNav",icons.agent,"Agent Lab")+nav("v3TasksNav",icons.tasks,"Tasks")+nav("v3MemoryNav",icons.memory,"Memories")+nav("v3FilesNav",icons.files,"Files & documents")+nav("v3MultiNav",icons.multi,"Multimodal")+nav("v3ToolsNav",icons.tools,"Tools")+nav("v3AssistantsNav",icons.assistant,"Assistants")+nav("v3MarketNav",icons.market,"Marketplace")+nav("v3ChartsNav",icons.charts,"Charts")+
- '</nav><div class="aRecentHead"><b>Recents</b><button class="aRecentToggle" id="recentToggle" title="Minimize recent chats">⌃</button></div><div id="aRecentList" class="aRecentList"></div></div>'+
- '<div class="aSidebarQuote"><div class="aQuote"><p>“Not just a tool, but a partner in your journey.”</p><small>ANGEL</small></div></div>'+
- '<div class="aUser" id="aUser"><button class="aUserBtn" id="v3SideUser"><span class="aAvatar">D</span><span class="aUserCopy"><span class="aUserName">Danny</span><span class="aUserPlan">Free plan</span></span><span class="aUserChevron">⌄</span></button><div class="aUserMenu" id="aUserMenu"></div></div>'+
- '<div class="aLegacyHooks"><button id="sideUser"></button><button id="newChat"></button><button id="angelNav"></button><button id="historyNav"></button><button id="exploreNav"></button><button id="intelligenceNav"></button><button id="projectsNav"></button><button id="settingsNav"></button><button id="sideAuth"></button><button id="authBtn"></button></div>';
+const ico=n=>'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="'+(path[n]||path.more)+'"></path></svg>';
+let legacy={},screen="home",chatData=[],pinned=new Set(JSON.parse(localStorage.getItem("angel.pinned")||"[]")),archived=new Set(JSON.parse(localStorage.getItem("angel.archived")||"[]")),deleted=new Set(JSON.parse(localStorage.getItem("angel.deleted")||"[]")),themeMode=localStorage.getItem("angel.theme.mode")||localStorage.getItem("angel.theme")||"dark",selectedModel=localStorage.getItem("angel.model")||"Auto",think=false;
+const isMobile=()=>innerWidth<=760;
+const isTablet=()=>innerWidth<=1024;
+function toast(t){const x=$("#toast");if(!x)return;x.textContent=t;x.classList.add("show");clearTimeout(x._t);x._t=setTimeout(()=>x.classList.remove("show"),2200)}
+function userName(){return localStorage.getItem("angel.displayName")||document.querySelector(".a5-name")?.textContent||"Daniel"}
+function initials(n){return String(n).trim().split(/s+/).map(x=>x[0]).join("").slice(0,2).toUpperCase()||"D"}
+function setTheme(m){themeMode=m;localStorage.setItem("angel.theme.mode",m);const resolved=m==="device"?(matchMedia("(prefers-color-scheme:light)").matches?"light":"dark"):m;localStorage.setItem("angel.theme",resolved);document.documentElement.dataset.theme=resolved;refreshTheme()}
+function refreshTheme(){$$(".a5-theme").forEach(b=>b.classList.toggle("active",b.dataset.theme===themeMode))}
+function persist(k,s){localStorage.setItem(k,JSON.stringify([...s]))}
+function closePops(){$$(".a5-pop.open,.a5-profile.open,.a5-toolpanel.open,.a5-video-sheet.open").forEach(x=>x.classList.remove("open"))}
+function toggleSidebar(){
+  if(isMobile()){$("#sidebar")?.classList.toggle("a5-mobile-open");return}
+  const collapsed=document.body.classList.toggle("a5-collapsed");localStorage.setItem("angel.sidebarCollapsed",collapsed?"1":"0");renderSidebar()
 }
-
-function buildTopbar(){
- const h=$(".topbar");if(!h)return;
- h.innerHTML='<div class="aTopSearch"><span>'+icons.search+'</span><input id="globalChatSearch" placeholder="Search chats…" autocomplete="off"></div>'+
- '<div class="aTopActions"><button class="aTopBtn" id="shareChatTop">↗ Share</button><button class="aTopBtn offer" id="planOfferTop">Try Plus free</button><div class="aMoreWrap" id="chatMoreWrap"><button class="aTopBtn" id="chatMoreTop">⋯ More</button><div class="aMoreMenu">'+
- '<button class="aMenuItem" data-topmore="View files in chat">View files in chat</button><button class="aMenuItem" data-topmore="Pin chat">Pin chat</button><button class="aMenuItem" data-topmore="Archive chat">Archive chat</button><button class="aMenuItem danger" data-topmore="Delete chat">Delete chat</button>'+
- '</div></div></div>';
+function iconButton(name,label=""){return '<span class="a5-navicon" aria-hidden="true">'+ico(name)+'</span>'+label}
+function navBtn(id,label,iconName){return '<button class="a5-navitem" data-nav="'+id+'">'+iconButton(iconName,label)+'</button>'}
+function renderSidebar(){
+ const collapsed=document.body.classList.contains("a5-collapsed");
+ const expanded='<div class="a5-expanded"><div class="a5-brandrow"><button class="a5-brand" id="a5-brand"><img src="/angel-logo.svg" alt="Angel"></button><div class="a5-brand-name">Angel</div><button class="a5-collapse" id="a5-collapse">‹</button></div>'+
+ '<div class="a5-searchrow" id="a5-searchrow"><button class="a5-searchbutton" id="a5-searchbutton" title="Search chats">'+ico("search")+'</button><input id="a5-searchinput" class="a5-searchinput" placeholder="Search chats…" autocomplete="off"></div>'+
+ '<button class="a5-newchat" data-nav="chat"><span class="a5-plus">＋</span><span class="a5-sidebar-label">New chat</span></button>'+
+ '<div class="a5-scroll"><div class="a5-section">Tools</div>'+
+ navBtn("home","Home","home")+navBtn("agent","Agent Lab","agent")+navBtn("projects","Projects","project")+navBtn("schedule","Schedule","schedule")+navBtn("library","Library","library")+navBtn("media","Media Studio","media")+navBtn("assistants","Assistants","assistant")+navBtn("more","More","more")+
+ '<div class="a5-section">Recents</div><div class="a5-chatlist" id="a5-recents"></div>'+
+ '<button class="a5-subtoggle" data-toggle="pinned"><span>Pinned</span><b>›</b></button><div id="a5-pinned" class="a5-chatlist"></div>'+
+ '<button class="a5-subtoggle" data-toggle="archived"><span>Archived</span><b>›</b></button><div id="a5-archived" class="a5-chatlist"></div></div>'+
+ '<div class="a5-quote"><p>“The best tool disappears into the work.”</p><small>ANGEL · ROTATING</small></div>'+
+ '<div class="a5-profile" id="a5-profile"><button class="a5-profilebtn" id="a5-profilebtn"><span class="a5-avatar">'+initials(userName())+'</span><span style="min-width:0"><span class="a5-name">'+esc(userName())+'</span><span class="a5-plan">Free plan</span></span><span style="margin-left:auto;color:var(--a5-faint)">›</span></button><div class="a5-profilemenu" id="a5-profilemenu"></div><div class="a5-helppanel" id="a5-helppanel"></div></div></div>';
+ const rail='<div class="a5-collapsed"><button class="a5-collapsed-logo" id="a5-rail-open" title="Open sidebar"><img src="/angel-logo.svg" alt="Angel"></button><div class="a5-rail">'+
+ [["chat","chat"],["projects","project"],["agent","agent"],["schedule","schedule"],["library","library"],["media","media"],["assistants","assistant"],["more","more"]].map(x=>'<button class="a5-railbtn" data-nav="'+x[0]+'" title="'+x[0]+'">'+ico(x[1])+'</button>').join("")+
+ '<div class="a5-railspacer"></div><button class="a5-railavatar" id="a5-rail-profile">'+initials(userName())+'</button></div>'+
+ '<div class="a5-hoverpanel">'+expanded+'</div></div>';
+ $("#sidebar").innerHTML=collapsed?rail:expanded;bindSidebar();paintChats()
 }
-
-function userMenuHtml(s){
- const plan=s?"Free plan":"Guest / Free";
- return '<div class="aPlanBox"><b>'+plan+'</b><small>Plans, account controls and workspace preferences live here.</small><button class="aTopBtn offer" style="width:100%" data-user="plans">Try Plus free</button></div>'+
- '<div class="aMenuGroup"><button class="aMenuItem" data-user="profile">Profile <span>›</span></button><button class="aMenuItem" data-user="personalization">Personalization <span>›</span></button><button class="aMenuItem" data-user="settings">Settings <span>›</span></button></div>'+
- '<div class="aMenuGroup"><button class="aMenuItem" data-user="help">Help center</button><button class="aMenuItem" data-user="release">Release notes</button><button class="aMenuItem" data-user="apps">Download apps</button><button class="aMenuItem" data-user="shortcuts">Keyboard shortcuts</button><button class="aMenuItem" data-user="bug">Report a bug</button></div>'+
- '<div class="aMenuGroup"><button class="aMenuItem" data-user="terms">Terms of service</button><button class="aMenuItem" data-user="privacy">Privacy policy</button><div style="padding:7px 9px"><div style="font-size:8px;color:var(--a-faint);margin-bottom:5px">APPEARANCE</div><div class="aThemeRow"><button data-theme="light" class="'+(theme==="light"?"active":"")+'">Light</button><button data-theme="dark" class="'+(theme==="dark"?"active":"")+'">Dark</button></div></div></div>'+
- '<div class="aMenuGroup"><button class="aMenuItem danger" data-user="logout">'+(s?"Log out":"Sign in")+'</button></div>';
+function bindSidebar(){
+ $("#a5-collapse")?.addEventListener("click",toggleSidebar);$("#a5-rail-open")?.addEventListener("click",()=>{document.body.classList.remove("a5-collapsed");localStorage.setItem("angel.sidebarCollapsed","0");renderSidebar()});
+ $("#a5-brand")?.addEventListener("click",()=>showScreen("home"));$("#a5-searchbutton")?.addEventListener("click",()=>{const r=$("#a5-searchrow");r.classList.add("open");$("#a5-searchinput").focus();showSearch("")});
+ $("#a5-searchinput")?.addEventListener("input",e=>showSearch(e.target.value));$("#a5-profilebtn")?.addEventListener("click",openProfile);$("#a5-rail-profile")?.addEventListener("click",openProfileFromRail);
+ $$("[data-nav]").forEach(b=>b.addEventListener("click",()=>handleNav(b.dataset.nav)));
+ $$(".a5-subtoggle").forEach(b=>b.addEventListener("click",()=>{const t=b.dataset.toggle,box=$("#a5-"+t),hidden=box.classList.contains("a5-hidden");box.classList.toggle("a5-hidden",!hidden);b.querySelector("b").textContent=hidden?"⌄":"›"}));
 }
-async function renderUserMenu(open){
- const s=(await sb.auth.getSession()).data.session||null, m=$("#aUserMenu"),u=$("#aUser");if(!m||!u)return;
- m.innerHTML=userMenuHtml(s);u.classList.toggle("is-open",open);
- m.querySelectorAll("[data-theme]").forEach(b=>b.onclick=()=>themeSet(b.dataset.theme));
- m.querySelectorAll("[data-user]").forEach(b=>b.onclick=()=>userAction(b.dataset.user));
+function handleNav(n){if(n==="home")return showScreen("home");if(n==="chat")return showScreen("chat");if(n==="projects")return showScreen("projects");if(n==="schedule")return showScreen("schedule");if(n==="library")return showScreen("library");if(n==="media")return showScreen("media");if(n==="more")return openToolPanel();if(n==="agent")return window.dispatchEvent(new Event("angel-agent-lab-open"));if(n==="assistants")return legacy.assistants?.click()}
+function paintChats(){
+ const a=$("#a5-recents"),p=$("#a5-pinned"),r=$("#a5-archived");if(!a)return;
+ const row=x=>'<button class="a5-chatrow" data-chat="'+esc(x.id)+'"><span class="a5-chat-icon">'+ico("chat")+'</span><span class="a5-chat-title">'+esc(x.title)+'</span><button class="a5-chat-more" data-more="'+esc(x.id)+'">···</button></button>';
+ a.innerHTML=chatData.filter(x=>!pinned.has(x.id)&&!archived.has(x.id)).slice(0,8).map(row).join("")||'<div class="a5-notice">No recent chats yet.</div>';
+ p.innerHTML=chatData.filter(x=>pinned.has(x.id)).map(row).join("")||'<div class="a5-notice">Nothing pinned.</div>';
+ r.innerHTML=chatData.filter(x=>archived.has(x.id)).map(row).join("")||'<div class="a5-notice">Nothing archived.</div>';
+ $$("#sidebar [data-chat]").forEach(b=>b.addEventListener("click",e=>{if(e.target.closest("[data-more]"))return;showScreen("chat",b.dataset.chat)}));$$("#sidebar [data-more]").forEach(b=>b.addEventListener("click",e=>{e.stopPropagation();openChatMenu(b.dataset.more,b)}))
 }
-function userAction(a){
- $("#aUser")?.classList.remove("is-open");
- if(["profile","personalization","settings"].includes(a)){renderSettings(a);return}
- if(a==="logout"){ $("#sideAuth")?.click();return }
- if(a==="shortcuts"){toast("Enter to send · Shift+Enter for a new line · Ctrl/Cmd+K to search");return}
- if(a==="plans"){toast("Plans panel");return}
- toast(a.replaceAll("-"," ")+" selected");
+async function loadChats(){
+ try{const s=(await sb5.auth.getSession()).data.session;if(s){const r=await sb5.from("conversations").select("id,title,updated_at").eq("user_id",s.user.id).order("updated_at",{ascending:false}).limit(30);chatData=(r.data||[]).filter(x=>!deleted.has(x.id)).map(x=>({id:x.id,title:x.title||"Conversation"}))}}catch{}
+ if(!chatData.length)chatData=[{id:"demo-1",title:"Building Angel · Agent Lab"},{id:"demo-2",title:"Recent AI agent research"},{id:"demo-3",title:"Angel frontend redesign"},{id:"demo-4",title:"Files and documents workflow"},{id:"demo-5",title:"Cloud architecture notes"}];
+ paintChats()
 }
-
-function recentData(){return [
- {id:"demo-1",t:"Building Angel · Agent Lab",m:"4m"},
- {id:"demo-2",t:"Recent AI agent research",m:"44m"},
- {id:"demo-3",t:"Angel frontend redesign",m:"5h"},
- {id:"demo-4",t:"Files and documents workflow",m:"yesterday"},
- {id:"demo-5",t:"Cloud architecture notes",m:"2d"},
- {id:"demo-6",t:"Task scheduling ideas",m:"3d"}
-]}
-function renderRecents(){
- const list=$("#aRecentList");if(!list)return;
- const rows=recentData();list.innerHTML=rows.map(x=>'<div class="aChatRow" data-chat="'+x.id+'"><span style="width:12px;color:var(--a-faint)">'+(localStorage.getItem("pin-"+x.id)?"⌖":"")+'</span><div class="aChatMain"><span class="aChatTitle">'+esc(x.t)+'</span><span class="aChatMeta">'+x.m+'</span></div><button class="aChatMore" data-more="'+x.id+'" title="Chat options">⋯</button></div>').join("");
- list.classList.toggle("is-min",recentsMin);$("#recentToggle").textContent=recentsMin?"⌄":"⌃";
+function openChatMenu(id,btn){closePops();const m=document.createElement("div");m.className="a5-pop open";m.innerHTML='<div class="a5-poptitle">Chat options</div>'+["share:Share chat","rename:Rename chat","pin:Pin / unpin chat","lock:Lock chat","archive:Archive chat","delete:Delete chat"].map(x=>{const[a,b]=x.split(":");return '<button data-cm="'+a+'" class="'+(a==="delete"?"danger":"")+'">'+b+'</button>'}).join("");document.body.appendChild(m);const r=btn.getBoundingClientRect();m.style.left=Math.max(8,r.right-245)+"px";m.style.top=Math.min(innerHeight-230,r.bottom+4)+"px";m.querySelectorAll("[data-cm]").forEach(b=>b.onclick=()=>{chatAction(id,b.dataset.cm);m.remove()})}
+function chatAction(id,a){if(a==="pin"){pinned.has(id)?pinned.delete(id):pinned.add(id);persist("angel.pinned",pinned);paintChats();return}if(a==="archive"){archived.add(id);persist("angel.archived",archived);paintChats();return}if(a==="delete"){deleted.add(id);persist("angel.deleted",deleted);paintChats();toast("Moved to Recycle Bin");return}if(a==="lock"){toast("Locked chat is available in Secrets");return}toast(a==="rename"?"Rename chat":"Share link ready")}
+function showSearch(term){let p=$("#a5-searchresults");if(!p){p=document.createElement("div");p.id="a5-searchresults";p.className="a5-pop open";document.body.appendChild(p)}const t=term.trim().toLowerCase();const rows=chatData.filter(x=>!t||x.title.toLowerCase().includes(t));p.innerHTML='<div class="a5-poptitle">Search chats</div>'+rows.slice(0,8).map(x=>'<button data-sr="'+esc(x.id)+'">'+ico("chat")+' <span style="margin-left:7px">'+esc(x.title)+'</span></button>').join("")+(rows.length?"":"<div class='a5-notice'>No matching chats.</div>");const sr=$("#a5-searchrow")?.getBoundingClientRect();if(isMobile()){p.style.left="10px";p.style.top="62px";p.style.right="10px"}else{p.style.left=((sr?.right||300)+8)+"px";p.style.top=(sr?.top||90)+"px"}p.querySelectorAll("[data-sr]").forEach(b=>b.onclick=()=>{p.remove();showScreen("chat",b.dataset.sr)})}
+function openProfileFromRail(){document.body.classList.remove("a5-collapsed");localStorage.setItem("angel.sidebarCollapsed","0");renderSidebar();setTimeout(openProfile,0)}
+function openProfile(){const w=$("#a5-profile"),m=$("#a5-profilemenu");if(!w||!m)return;w.classList.toggle("open");if(!w.classList.contains("open"))return;m.innerHTML='<div class="a5-menuhead"><strong>'+esc(userName())+'</strong><small>Free plan</small></div><div class="a5-planbox"><b>Free plan</b><button class="a5-upgrade">Try Plus free</button></div>'+
+ [["sun","Personalization"],["chat","Profile"],["device","Settings"]].map(x=>'<button class="a5-menubtn" data-prof="'+x[1].toLowerCase()+'">'+ico(x[0])+'<span>'+x[1]+'</span></button>').join("")+
+ '<div class="a5-divider"></div><button class="a5-menubtn" data-prof="help">'+ico("more")+'<span>Help</span><span style="margin-left:auto">›</span></button><button class="a5-menubtn danger" data-prof="logout">'+ico("lock")+'<span>Log out</span>';
+ m.querySelectorAll("[data-prof]").forEach(b=>b.onclick=()=>profileAction(b.dataset.prof))}
+function profileAction(a){if(a==="help")return openHelp();$("#a5-profile")?.classList.remove("open");if(a==="personalization")return openTheme();if(a==="profile")return showScreen("profile");if(a==="settings")return showScreen("settings");if(a==="logout")return legacy.sideAuth?.click()}
+function openHelp(){const p=$("#a5-helppanel"),w=$("#a5-profile");if(!p||!w)return;p.innerHTML='<div class="a5-menuhead"><strong>Help & Support</strong><button id="a5-help-close" style="float:right;border:0;background:none;color:var(--a5-muted);cursor:pointer">×</button></div>'+["Help Center","Release Notes","Download Apps","Keyboard Shortcuts","Terms of Service","Privacy Policy","Report a Bug"].map(x=>'<button class="a5-menubtn"><span>'+x+'</span><span style="margin-left:auto">›</span></button>').join("");p.classList.add("open");$("#a5-help-close").onclick=()=>p.classList.remove("open")}
+function openTheme(){closePops();const p=document.createElement("div");p.className="a5-pop open";p.innerHTML='<div class="a5-poptitle">Theme</div><div class="a5-themegrid"><button class="a5-theme" data-theme="dark">Dark</button><button class="a5-theme" data-theme="light">Light</button><button class="a5-theme" data-theme="device">Device</button></div>';document.body.appendChild(p);const r=$("#a5-profilebtn")?.getBoundingClientRect();p.style.left=Math.max(8,(r?.right||260)-245)+"px";p.style.top=Math.min(innerHeight-100,(r?.top||100))+"px";p.querySelectorAll("[data-theme]").forEach(b=>b.onclick=()=>{setTheme(b.dataset.theme);p.remove()});refreshTheme()}
+function buildTop(){const h=$(".topbar");h.className="topbar a5-topbar";h.innerHTML='<div class="a5-mobilebar"><button id="a5-mobilemenu">'+ico("more")+'</button><strong>Angel</strong></div><div class="a5-topspacer"></div><button class="a5-topbtn a5-topicon" id="a5-notify">'+ico("bell")+'</button><button class="a5-topbtn" id="a5-share">Share chat</button><button class="a5-topbtn offer" id="a5-plus">Try Plus free</button><div class="a5-topwrap"><button class="a5-topbtn a5-topicon" id="a5-more">'+ico("more")+'</button></div><div class="a5-topwrap"><button class="a5-topbtn a5-topicon" id="a5-theme">'+ico("sun")+'</button></div>';
+ $("#a5-mobilemenu")?.addEventListener("click",toggleSidebar);$("#a5-share").onclick=()=>toast("Share link ready");$("#a5-plus").onclick=()=>toast("Plans panel");$("#a5-notify").onclick=()=>toast("No new notifications");$("#a5-more").onclick=()=>openToolPanel();$("#a5-theme").onclick=()=>openTheme()}
+function openToolPanel(){let p=$("#a5-toolpanel");if(!p){p=document.createElement("div");p.id="a5-toolpanel";p.className="a5-toolpanel";p.innerHTML='<button class="a5-panelclose" id="a5-tool-close">×</button>'+toolCategory("Productivity",[["Schedule","schedule"],["Projects","project"],["Library","library"],["Media Studio","media"]])+toolCategory("AI & Assistants",[["Agent Lab","agent"],["Assistants","assistant"],["Marketplace","more"],["Charts","chart"]])+toolCategory("Knowledge",[["Memory","memory"],["Multimodal","image"],["Skills","agent"]])+toolCategory("Integrations",[["Plugins","plug"],["Connections","plug"]])+toolCategory("Security",[["Secrets","lock"],["Recycle Bin","trash"]]);document.body.appendChild(p);p.querySelector("#a5-tool-close").onclick=()=>p.classList.remove("open");p.querySelectorAll("[data-tool]").forEach(b=>b.onclick=()=>{const t=b.dataset.tool;showTool(t);p.classList.remove("open")})}p.classList.toggle("open")}
+function toolCategory(title,items){return '<h4>'+title+'</h4><div class="a5-toolgrid">'+items.map(x=>'<button data-tool="'+x[0]+'">'+ico(x[1])+'<span>'+x[0]+'</span></button>').join("")+'</div>'}
+function showTool(t){if(t==="Agent Lab")return window.dispatchEvent(new Event("angel-agent-lab-open"));if(t==="Assistants")return legacy.assistants?.click();if(t==="Recycle Bin")return showScreen("recycle");if(t==="Projects")return showScreen("projects");if(t==="Schedule")return showScreen("schedule");if(t==="Library")return showScreen("library");if(t==="Media Studio")return showScreen("media");toast(t+" opened")}
+function randomGreeting(){const n=esc(userName());return ["Good morning, "+n+" 🌿","Good to see you, "+n+" 👋","Welcome back, "+n+" ✨","Ready when you are, "+n+" 🚀","It’s been a while, "+n+" 🙂","What are we building today, "+n+"?"][Math.floor(Math.random()*6)]}
+function showScreen(s,chatId=null){screen=s;document.body.className=document.body.className.replace(/a5-S+/g,"").trim();document.body.classList.add("a5",("a5-"+s));if(s==="home")home();else if(s==="chat")chat(chatId);else if(s==="projects")simple("Projects","Keep website builds, coding, research and long-running work organized.",[["Angel website","UI redesign · active"],["Agent Lab","Agent workflows · active"],["Music learning app","Product scope · parked"],["School ICT tools","Teaching utilities · active"]]);else if(s==="schedule")simple("Schedule","Reminders, recurring work and things Angel should handle later.",[["Angel UI review","Tonight · pending"],["Weekly project review","Every Friday · recurring"],["Research digest","Every Monday · recurring"],["Follow-up task","Tomorrow · scheduled"]]);else if(s==="library")simple("Library","Documents, books, generated assets and reference material live here.",[["Agent Lab capability review","PDF · 2.4 MB"],["AI assistant comparison","Document · 840 KB"],["Angel agent scaffold","ZIP · source package"],["Generated media","Collection · 18 items"]]);else if(s==="media")media();else if(s==="profile")simple("Profile","Identity, plan and account information.",[["Name",userName()],["Plan","Free plan"],["Personalization","Available"],["Account security","Protected by Supabase Auth"]]);else if(s==="settings")simple("Settings","Control appearance and interaction preferences.",[["Theme","Use the sun control in the top bar"],["Sidebar","Expanded desktop, collapsed tablet/phone"],["Voice","Dictation + voice mode"],["Video","Live camera or screen sharing"]]);else if(s==="recycle")simple("Recycle Bin","Deleted chats stay here until they are permanently removed.",[["Deleted chats","Stored separately"],["Restore","Available from item actions"],["Empty bin","Permanent deletion requires confirmation"]]);else if(s==="more")morePage();syncNav();syncBottom();syncComposer()}
+function home(){document.querySelector("#page").innerHTML='<section class="a5-home"><div class="a5-homehead"><h1 class="a5-greeting">'+randomGreeting()+'</h1><span class="a5-presence" title="Angel ready"></span></div><div class="a5-grid"><div><div class="a5-card"><div class="a5-cardhead"><h2>Start with Angel</h2><span>Choose a direction</span></div><div class="a5-actions">'+homeAction("agent","Agent Lab","Give Angel a job and let it work.","agent")+homeAction("project","Projects","Keep long-running work organized.","projects")+homeAction("image","Create image","Turn an idea into an image.","media")+homeAction("schedule","Schedule","Plan reminders and recurring work.","schedule")+'</div></div><div class="a5-agentbanner"><div class="a5-activityicon">'+ico("agent")+'</div><div><strong>Agent Lab</strong><span>Tasks, approvals, skills and reusable assistants.</span></div><div class="a5-flex"></div><button class="a5-outline" data-nav="agent">Open</button></div></div><div><div class="a5-card"><div class="a5-cardhead"><h2>Latest News</h2><span>Live search</span></div><div class="a5-news">'+news("AI Studio and vibe coding","Search the latest developer tools and builds.","build news")+news("AI agents","Search what changed in agents, browsing and automation.","agent news")+news("Business + tech","Search fresh headlines for Nigeria or your industry.","local tech news")+news("Creative AI","Search image, video and multimodal updates.","media news")+'</div></div><div class="a5-card" style="margin-top:13px"><div class="a5-cardhead"><h2>Recent Activity</h2><span>Angel</span></div><div class="a5-activity">'+activity("Website redesign","Projects · active","project")+activity("Research task","Agent Lab · completed","agent")+activity("Image generation","Media Studio · recent","image")+'</div></div></div></div></section>';$$("#page [data-nav]").forEach(b=>b.onclick=()=>handleNav(b.dataset.nav))}
+function homeAction(i,t,s,n){return '<button class="a5-action" data-nav="'+n+'"><span class="a5-actionicon">'+ico(i)+'</span><b>'+t+'</b><small>'+s+'</small></button>}
+function news(a,b,c){return '<button class="a5-newsrow" data-news="'+esc(c)+'"><span class="a5-newsdot"></span><div><b>'+a+'</b><small>'+b+'</small></div></button>}
+function activity(a,b,i){return '<div class="a5-activityrow"><span class="a5-activityicon">'+ico(i)+'</span><div><b>'+a+'</b><small>'+b+'</small></div></div>'}
+function chat(){
+ $("#page").innerHTML='<section class="a5-chatpage"><div class="a5-chatwelcome"><h1>Hello again, '+esc(userName())+'</h1><p>Start with a thought, a question, a task, or a real-world problem.</p><div class="a5-chips"><button class="a5-chip" data-prompt="Latest tech news and what changed this week">Latest tech news</button><button class="a5-chip" data-prompt="Create a practical marketing plan">Marketing plan</button><button class="a5-chip" data-prompt="Design a modern landing page">Design inspiration</button><button class="a5-chip" data-prompt="Build a beginner Python tutorial">Python tutorial</button></div><div class="a5-chattools"><button class="a5-chattool" id="a5-think">Think</button><button class="a5-chattool" id="a5-model">Model: '+esc(selectedModel)+'</button><button class="a5-chattool" id="a5-engine">Search engine</button><button class="a5-chattool" id="a5-browse">Browse web</button></div></div><div class="a5-suggestions"><div class="a5-sugtitle">Try searching for</div><div class="a5-suggrid"><button class="a5-sug" data-prompt="latest tech news">Latest tech news</button><button class="a5-sug" data-prompt="design inspiration for an AI app">Design inspiration</button><button class="a5-sug" data-prompt="build a marketing plan">Marketing plan</button><button class="a5-sug" data-prompt="healthy meal ideas">Healthy meal ideas</button></div></div></section>';
+ $$("#page [data-prompt]").forEach(b=>b.onclick=()=>{$("#message").value=b.dataset.prompt;$("#message").dispatchEvent(new Event("input",{bubbles:true}));$("#message").focus()});
+ $("#a5-think").onclick=()=>{think=!think;localStorage.setItem("angel.think",think?"1":"0");$("#a5-think").classList.toggle("active",think);toast(think?"Think enabled":"Think disabled")};
+ $("#a5-model").onclick=()=>openModelMenu($("#a5-model"));$("#a5-engine").onclick=()=>toast("Angel search engine: live web research");$("#a5-browse").onclick=()=>{$("#researchBtn")?.click();toast("Web research enabled")};
 }
-function chatMenu(id,btn){
- $(".aContextMenu")?.remove();
- const m=document.createElement("div");m.className="aContextMenu open";m.innerHTML='<button>Share chat</button><button>Rename</button><button>Pin / unpin</button><button>Archive</button><button class="danger">Delete</button>';document.body.appendChild(m);
- const r=btn.getBoundingClientRect();m.style.left=Math.max(8,r.right-175)+"px";m.style.top=Math.min(innerHeight-170,r.bottom+4)+"px";
- m.querySelectorAll("button").forEach((b,i)=>b.onclick=()=>{if(i===2){const k="pin-"+id;localStorage.setItem(k,localStorage.getItem(k)?"":"1");renderRecents()}else toast(b.textContent);m.remove()});
+function openModelMenu(anchor){closePops();const p=document.createElement("div");p.className="a5-pop open";p.innerHTML='<div class="a5-poptitle">Model routing</div>'+["Auto|Best fit for the task","Fast|Speed-first routing","Reasoning|More deliberate answers","Deep Research|Research + citations","Creative|Image and video aware"].map((x,i)=>{const[a,b]=x.split("|");return '<button data-model="'+a+'"><b>'+a+'</b><small style="display:block;color:var(--a5-faint);font-size:7px;margin-top:2px">'+b+'</small></button>'}).join("");document.body.appendChild(p);const r=anchor.getBoundingClientRect();p.style.left=r.left+"px";p.style.top=Math.min(innerHeight-240,r.bottom+5)+"px";p.querySelectorAll("[data-model]").forEach(b=>b.onclick=()=>{selectedModel=b.dataset.model;localStorage.setItem("angel.model",selectedModel);p.remove();showScreen("chat")})}
+function media(){document.querySelector("#page").innerHTML='<section class="a5-page"><h1>Media Studio</h1><p class="intro">One studio for image and video creation across desktop, tablet and phone.</p><div class="a5-card"><div class="a5-cardhead"><h2>Images</h2><span>Trending · Templates</span></div><div class="a5-grid3">'+["Nature moodboard","Product concept","Editorial portrait","Social pack","Wallpaper series","Brand banner"].map(x=>'<button class="a5-media"><b>'+x+'</b><span>Image creation workflow</span></button>').join("")+'</div></div><div class="a5-card" style="margin-top:13px"><div class="a5-cardhead"><h2>Videos</h2><span>Live · Generated</span></div><div class="a5-grid3">'+["Product teaser","Explainer","Short-form story"].map(x=>'<button class="a5-media"><b>'+x+'</b><span>Video creation workflow</span></button>').join("")+'</div></div></section>'}
+function simple(t,i,rows){$("#page").innerHTML='<section class="a5-page"><h1>'+t+'</h1><p class="intro">'+i+'</p><div class="a5-simplegrid">'+rows.map(r=>'<div class="a5-simple"><b>'+r[0]+'</b><span>'+r[1]+'</span></div>').join("")+'</div></section>'}
+function morePage(){const cat=(title,items)=>'<section class="a5-category"><h3>'+title+'</h3><div class="a5-toolgrid">'+items.map(x=>'<button data-toolpage="'+x[0]+'"><b>'+x[0]+'</b><small>Open '+x[0].toLowerCase()+'</small></button>').join("")+'</div></section>';$("#page").innerHTML='<section class="a5-morepage"><h1>More</h1><p>Secondary capabilities stay here so the main workspace remains calm.</p>'+cat("Productivity",[["Schedule"],["Projects"],["Library"],["Media Studio"]])+cat("AI & Assistants",[["Agent Lab"],["Assistants"],["Marketplace"],["Charts"]])+cat("Knowledge",[["Memory"],["Multimodal"],["Skills"]])+cat("Integrations",[["Plugins"],["Connections"]])+cat("Security",[["Secrets"],["Recycle Bin"]])+'</section>';$$("[data-toolpage]").forEach(b=>b.onclick=()=>showTool(b.dataset.toolpage))}
+function renderComposer(){
+ const c=$(".composer"),box=$("#message"),inner=c?.querySelector(".composerInner");if(!c||!box||!inner||$("#a5-composerbar"))return;
+ const meta=document.createElement("div");meta.id="a5-composerbar";meta.className="a5-composerbar";
+ const wrap=(id,label,click)=>{const b=document.createElement("button");b.className="a5-pill";b.id=id;b.textContent=label;b.onclick=click;return b};
+ const add=wrap("a5-add","+ Add",()=>toggleMenu(addMenu)),addMenu=document.createElement("div");addMenu.className="a5-popmenu";addMenu.id="a5-addmenu";addMenu.innerHTML=[["Library","library"],["Image","image"],["Video","media"],["Document","doc"],["Agent task","agent"]].map(x=>'<button class="a5-menuaction" data-add="'+x[1]+'">'+ico(x[1])+'<span>'+x[0]+'</span></button>').join("");
+ add.parentElement||(void 0);const addWrap=document.createElement("div");addWrap.className="a5-composewrap";addWrap.append(add,addMenu);meta.append(addWrap);
+ meta.append(wrap("a5-dictate","Dictate",()=>$("#micBtn")?.click()),wrap("a5-voice","Voice mode",()=>{$("#voicePanel")?.classList.add("open");toast("Voice mode ready")}));
+ const vw=document.createElement("div");vw.className="a5-composewrap";const vb=wrap("a5-video","Video mode",()=>videoMenu.classList.toggle("open"));const videoMenu=document.createElement("div");videoMenu.className="a5-popmenu";videoMenu.innerHTML='<button class="a5-menuaction" data-video="camera">'+ico("video")+'<span>Live camera</span></button><button class="a5-menuaction" data-video="screen">'+ico("device")+'<span>Share screen</span></button>';vw.append(vb,videoMenu);meta.append(vw);
+ meta.append(wrap("a5-think","Think",()=>{think=!think;localStorage.setItem("angel.think",think?"1":"0");$("#a5-think")?.classList.toggle("active",think);toast(think?"Think enabled":"Think disabled")}));
+ const mw=document.createElement("div");mw.className="a5-composewrap";const mb=wrap("a5-model","Model: "+selectedModel,()=>openModelMenu(mb));const mm=document.createElement("div");mm.className="a5-popmenu";mm.innerHTML=["Auto","Fast","Reasoning","Deep Research","Creative"].map(x=>'<button class="a5-menuaction" data-model="'+x+'"><span>'+x+'</span></button>').join("");mw.append(mb,mm);meta.append(mw);
+ inner.insertBefore(meta,inner.querySelector(".composerBox"));
+ addMenu.querySelectorAll("[data-add]").forEach(b=>b.onclick=()=>{addMenu.classList.remove("open");const t=b.dataset.add;if(t==="library")showScreen("library");else if(t==="agent"){showScreen("chat");box.value="Run an agent task: ";box.focus()}else if(t==="doc")$("#uploadBtn")?.click();else if(t==="image"){box.value+="Create an image: ";box.focus()}else if(t==="media"){box.value+="Create a video: ";box.focus()}});
+ videoMenu.querySelectorAll("[data-video]").forEach(b=>b.onclick=()=>{videoMenu.classList.remove("open");videoMode(b.dataset.video)});
+ mm.querySelectorAll("[data-model]").forEach(b=>b.onclick=()=>{selectedModel=b.dataset.model;localStorage.setItem("angel.model",selectedModel);mb.textContent="Model: "+selectedModel;mm.classList.remove("open")});
+ $("#sendBtn")?.addEventListener("click",()=>{if(!(box.value||"").trim())$("#a5-voice")?.click()});
+ box.addEventListener("input",()=>{const filled=!!box.value.trim();$("#sendBtn")?.replaceChildren(document.createTextNode(filled?"↑":"◉"))});
 }
-function showSection(title,intro,body,id){active(id||"");$("#page").innerHTML='<section class="aSectionPage"><h1 class="aSectionTitle">'+title+'</h1><p class="aSectionIntro">'+intro+'</p>'+body+'</section>'}
-function renderHome(){
- const g=["Good morning","Good evening","Welcome back","Good to see you","Ready when you are"][Math.floor(Math.random()*5)];
- const n=sessionName();
- const body='<div class="aHome"><div class="aHomeHead"><div class="aGreetingWrap"><h1 class="aGreeting">'+g+', <em>'+esc(n)+'</em> ·</h1></div><div class="aStatus"><span class="aStatusDot"></span>Online / offline ready</div></div>'+
- '<div class="aHomeGrid"><div>'+
- '<div class="aPanel"><div class="aPanelHead"><h2>Start with Angel</h2><span>New chat</span></div><div class="aPromptBox"><div class="aPromptHint">Ask Angel anything, start a task, attach a file, or hand Angel a job.</div><div class="aToolStrip"><button class="aQuickTool" data-action="chat">Chat</button><button class="aQuickTool" data-action="image">Create image</button><button class="aQuickTool" data-action="video">Create video</button><button class="aQuickTool" data-action="research">Web search</button><button class="aQuickTool" data-action="x">Live search</button><button class="aQuickTool" data-action="agent">Run agent</button></div></div></div>'+
- '<div class="aPanel" style="margin-top:12px"><div class="aPanelHead"><h2>What would you like to do?</h2><span>Quick actions</span></div><div class="aActionGrid">'+
- '<button class="aAction" data-action="chat"><div class="aActionIcon">◌</div><b>Chat</b><small>Have a conversation with Angel</small></button><button class="aAction" data-action="image"><div class="aActionIcon">▧</div><b>Create image</b><small>Turn an idea into an image</small></button><button class="aAction" data-action="video"><div class="aActionIcon">▷</div><b>Create video</b><small>Turn your idea into video</small></button><button class="aAction" data-action="research"><div class="aActionIcon">⌕</div><b>Web search</b><small>Research the live web</small></button><button class="aAction" data-action="x"><div class="aActionIcon">𝕏</div><b>Live search</b><small>Search live signals</small></button><button class="aAction" data-action="agent"><div class="aActionIcon">✦</div><b>Run agent</b><small>Let Angel work through a task</small></button><button class="aAction" data-action="assistant"><div class="aActionIcon">◎</div><b>Custom assistant</b><small>Create a reusable Angel</small></button><button class="aAction" data-view="market"><div class="aActionIcon">▤</div><b>Marketplace</b><small>Discover reusable assistants</small></button>'+
- '</div></div>'+
- '<div class="aLabBanner"><div class="aLabBannerIcon">✦</div><div class="aLabBannerCopy"><b>Agent Lab</b><span>Run agents, review traces, tasks, approvals, skills and assistants.</span></div><button class="aLabOpen" id="homeAgentLab">Open Agent Lab</button></div>'+
- '</div>'+
- '<div>'+
- '<div class="aPanel"><div class="aPanelHead"><h2>Recent activity</h2><span>Live</span></div><div class="aActivityList"><div class="aActivity"><div class="aActivityIcon">▧</div><div><b>Image generated</b><span>A scenic concept · 2m ago</span></div></div><div class="aActivity"><div class="aActivityIcon">▷</div><div><b>Video created</b><span>Project demo · 12m ago</span></div></div><div class="aActivity"><div class="aActivityIcon">✓</div><div><b>Task completed</b><span>Research follow-up · 18m ago</span></div></div><div class="aActivity"><div class="aActivityIcon">◎</div><div><b>Assistant installed</b><span>Research Scout · 1h ago</span></div></div></div></div>'+
- '<div class="aPanel" style="margin-top:12px"><div class="aPanelHead"><h2>Quick access</h2><span>Workspace</span></div><div class="aList"><button class="aListRow" data-view="tasks"><b>Tasks & schedules</b><span>›</span></button><button class="aListRow" data-view="files"><b>Stored files & documents</b><span>›</span></button><button class="aListRow" data-view="memory"><b>Memories</b><span>›</span></button><button class="aListRow" data-view="tools"><b>Plugins · Connectors · Skills</b><span>›</span></button></div></div>'+
- '</div></div></div>';
- $("#page").innerHTML=body;active("v3HomeNav");
- $("#page").querySelectorAll("[data-action]").forEach(b=>b.onclick=()=>homeAction(b.dataset.action));
- $("#page").querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>go(b.dataset.view));
- $("#homeAgentLab")?.addEventListener("click",()=>window.dispatchEvent(new Event("angel-agent-lab-open")));
-}
-function homeAction(a){if(a==="agent"){$("#agentLabNav")?.click();return}if(a==="assistant"){renderAssistants();return}if(a==="chat"){ $("#newChat")?.click();return}const m=$("#message");if(!m)return;const p={image:"Create an image based on this idea: ",video:"Create a video based on this idea: ",research:"Research this topic deeply and cite the important sources: ",x:"Search live social signals about: "}[a]||"";m.value=p;m.focus();m.dispatchEvent(new Event("input"));toast("Ready in the composer")}
-function go(v){if(v==="tasks")renderTasks();if(v==="memory")renderMemory();if(v==="files")renderFiles();if(v==="tools")renderTools();if(v==="assistants")renderAssistants();if(v==="market")renderMarket();if(v==="charts")renderCharts();if(v==="recents")renderRecentsPage()}
-
-function renderRecentsPage(){showSection("Recents","Previous conversations with Angel. The sidebar keeps the same history close at hand.","<div class='aPanel'><div class='aPanelHead'><h2>Recent chats</h2><button class='aTopBtn' id='newChatInner'>New chat</button></div><div class='aList'>"+recentData().map(x=>"<button class='aListRow'><b>"+esc(x.t)+"</b><span>"+x.m+" · ›</span></button>").join("")+"</div></div>");$("#newChatInner").onclick=()=>$("#v3NewChat")?.click()}
-function renderTasks(){let cells="";for(let i=0;i<84;i++){let v=(i*7+3)%6;cells+="<span class='aHeat' data-v='"+v+"'></span>"}showSection("Tasks & schedules","One place for tasks, reminders and scheduled work.",'<div class="aTwoCol"><div class="aPanel"><div class="aPanelHead"><h2>Task queue</h2><span>Agent + personal</span></div><div class="aList"><div class="aListRow"><b>Finish Angel UI redesign</b><span>In progress</span></div><div class="aListRow"><b>Review cloud architecture document</b><span>Tomorrow</span></div><div class="aListRow"><b>Research next agent capability gaps</b><span>Friday</span></div><div class="aListRow"><b>Weekly Angel review</b><span>Scheduled</span></div></div></div><div class="aPanel"><div class="aPanelHead"><h2>Task activity heatmap</h2><span>12 weeks</span></div><div class="aHeatmap">'+cells+'</div></div></div>','v3TasksNav')}
-function renderMemory(){showSection("Memories","Saved information Angel can use for continuity, kept inspectable and controllable.",'<div class="aCards"><div class="aCard"><h3>Angel project preferences</h3><p>Design direction, workspace structure and product goals.</p><small>Long-term · editable</small></div><div class="aCard"><h3>Work style</h3><p>Direct progress, visible implementation and phase-by-phase review.</p><small>Long-term · editable</small></div><div class="aCard"><h3>Conversation facts</h3><p>User-approved details that help Angel keep continuity.</p><small>Managed memory</small></div></div>','v3MemoryNav')}
-function renderFiles(){showSection("Files & documents","Find uploaded files, created assets and documents attached to conversations.",'<div class="aPanel"><div class="aPanelHead"><h2>Stored files</h2><button class="aTopBtn">Upload</button></div><div class="aList"><div class="aFileRow"><div class="aFileIcon">PDF</div><div class="aFileMain"><b>Agent Lab capability review.pdf</b><span>Uploaded · 2.4 MB</span></div><button>⋯</button></div><div class="aFileRow"><div class="aFileIcon">DOC</div><div class="aFileMain"><b>AI assistant comparison document</b><span>Uploaded · 840 KB</span></div><button>⋯</button></div><div class="aFileRow"><div class="aFileIcon">ZIP</div><div class="aFileMain"><b>angel-agent.zip</b><span>Uploaded · Source scaffold</span></div><button>⋯</button></div></div></div>','v3FilesNav')}
-function renderMultimodal(){showSection("Multimodal","One workspace for text, images, audio, video and documents.",'<div class="aCards"><div class="aCard"><h3>Vision</h3><p>Inspect screenshots, photos and visual references.</p></div><div class="aCard"><h3>Documents</h3><p>Read PDFs and office files as usable context.</p></div><div class="aCard"><h3>Voice</h3><p>Speak to Angel and receive spoken answers.</p></div><div class="aCard"><h3>Image creation</h3><p>Create or edit visual assets.</p></div><div class="aCard"><h3>Video</h3><p>Send ideas into Angel video generation.</p></div><div class="aCard"><h3>Future media</h3><p>Add new input and output types without redesigning the shell.</p></div></div>','v3MultiNav')}
-function renderTools(){active("v3ToolsNav");$("#page").innerHTML='<section class="aSectionPage"><h1 class="aSectionTitle">Tools & extensions</h1><p class="aSectionIntro">Plugins add capabilities. Connectors link services. Skills package reusable ways of working.</p><div class="aExtTabs"><button class="aExtTab active" data-tab="plugins"><b>Plugins</b><span>Add capabilities</span></button><button class="aExtTab" data-tab="connectors"><b>Connectors</b><span>Link services</span></button><button class="aExtTab" data-tab="skills"><b>Skills</b><span>Reusable workflows</span></button></div><div id="extBody"></div></section>';renderExt("plugins");$("#page").querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{$("#page").querySelectorAll(".aExtTab").forEach(x=>x.classList.remove("active"));b.classList.add("active");renderExt(b.dataset.tab)})}
-function renderExt(k){const d={plugins:[["Web research","Search and synthesize live information.","Connected"],["Vision tools","Understand images and visual references.","Connected"],["Creative tools","Image and video generation.","Ready"]],connectors:[["Google Drive","Documents and files.","Connect"],["Calendar","Schedules and reminders.","Connect"],["GitHub","Repositories and build workflows.","Connected"]],skills:[["Research Scout","Search, compare, cite, synthesize.","Skill"],["Build Coach","Plan, code, test and review.","Skill"],["Memory Steward","Manage long-term recall.","Skill"]]}[k];$("#extBody").innerHTML='<div class="aCards">'+d.map(x=>'<div class="aCard"><h3>'+x[0]+'</h3><p>'+x[1]+'</p><small>'+x[2]+'</small></div>').join("")+'</div>'}
-function renderAssistants(){showSection("Assistants","Reusable Angel configurations you can create, test and keep for a specific purpose.",'<div class="aCards"><div class="aCard"><h3>Research Scout</h3><p>Deep research, source checking and concise briefs.</p><small>Private · Active</small></div><div class="aCard"><h3>Build Coach</h3><p>Turns an idea into a practical build loop.</p><small>Private · Draft</small></div><div class="aCard"><h3>New assistant</h3><p>Choose tools, skills and access.</p><small>＋ Create</small></div></div>','v3AssistantsNav')}
-function renderMarket(){showSection("Marketplace","Discover reusable assistants built by you and the wider Angel ecosystem.",'<div class="aCards"><div class="aCard"><h3>Research Scout</h3><p>Fast research briefs with source tracing.</p><small>Popular</small></div><div class="aCard"><h3>Project Planner</h3><p>Break a goal into tasks and schedules.</p><small>New</small></div><div class="aCard"><h3>Visual Analyst</h3><p>Analyze screenshots, images and pages.</p><small>Featured</small></div></div>','v3MarketNav')}
-function renderCharts(){showSection("Charts","Useful activity at a glance, without turning Angel into a dashboard maze.",'<div class="aTwoCol"><div class="aPanel"><div class="aPanelHead"><h2>Angel activity</h2><span>7 days</span></div><div style="height:190px;display:flex;align-items:flex-end;gap:9px;border-bottom:1px solid var(--a-line);padding:8px">'+[42,65,48,78,56,91,72].map(v=>"<i style=\"flex:1;height:"+v+"%;background:var(--a-panel-2);border:1px solid var(--a-line-strong);border-bottom-color:var(--a-accent);border-radius:5px 5px 0 0\"></i>").join("")+'</div></div><div class="aPanel"><div class="aPanelHead"><h2>At a glance</h2><span>Workspace</span></div><div class="aList"><div class="aListRow"><b>Conversations</b><span>48</span></div><div class="aListRow"><b>Agent runs</b><span>17</span></div><div class="aListRow"><b>Tasks completed</b><span>31</span></div><div class="aListRow"><b>Files processed</b><span>12</span></div></div></div></div>','v3ChartsNav')}
-function renderSettings(which){active("");showSection("Settings","Profile, personalization, appearance, security, integrations, extensions and plans live under your account.",'<div class="aSettingGrid"><aside class="aSettingNav"><button class="active">Profile</button><button>Personalization</button><button>Appearance</button><button>Notifications</button><button>Privacy & security</button><button>Integrations</button><button>Plugins</button><button>Connectors</button><button>Skills</button><button>Plan</button></aside><div class="aSettingContent"><h3>'+((which==="profile")?"Profile & plan":"Appearance")+'</h3><p>'+((which==="profile")?"Your profile, personalization and current subscription level.":"Keep the white and black themes consistent across Angel.")+'</p><div class="aToggle"><span>Black theme</span><button id="darkSwitch" class="aSwitch '+(theme==="dark"?"on":"")+'"></button></div><div class="aToggle"><span>White theme</span><button id="lightSwitch" class="aSwitch '+(theme==="light"?"on":"")+'"></button></div><div class="aToggle"><span>Compact sidebar</span><button id="sideSwitch" class="aSwitch"></button></div></div></div>');$("#darkSwitch").onclick=()=>themeSet("dark");$("#lightSwitch").onclick=()=>themeSet("light");$("#sideSwitch").onclick=()=>toggleSidebar()}
-function toggleSidebar(){const s=$("#sidebar"),c=s.classList.toggle("is-collapsed");document.body.classList.toggle("sidebar-collapsed",c);localStorage.setItem("angel.sidebarCollapsed",c?"1":"0")}
+function toggleMenu(m){m.classList.toggle("open")}
+async function videoMode(kind){const s=document.createElement("div");s.className="a5-video-sheet open";s.innerHTML='<h3>Video mode <button id="a5-vclose" style="float:right;border:0;background:none;color:var(--a5-muted);cursor:pointer">×</button></h3><button class="a5-video-option" id="a5-vcamera">'+ico("video")+'<span><b>Live camera</b><small>Use the camera as Angel’s live visual feed.</small></span></button><button class="a5-video-option" id="a5-vscreen">'+ico("device")+'<span><b>Share screen</b><small>Let Angel see your current screen.</small></span></button>';document.body.append(s);$("#a5-vclose").onclick=()=>s.remove();$("#a5-vcamera").onclick=async()=>{try{await navigator.mediaDevices.getUserMedia({video:true});toast("Camera access granted");s.remove()}catch{toast("Camera access was not granted")}};$("#a5-vscreen").onclick=async()=>{try{await navigator.mediaDevices.getDisplayMedia({video:true});toast("Screen access granted");s.remove()}catch{toast("Screen access was not granted")}}}
+function syncNav(){$$(".a5-navitem").forEach(b=>b.classList.toggle("active",b.dataset.nav===screen))}
+function renderBottom(){if($("#a5-bottomnav"))return;const n=document.createElement("nav");n.id="a5-bottomnav";n.className="a5-bottomnav";n.innerHTML='<button data-b="home">'+ico("home")+'<span>Home</span></button><button data-b="chat">'+ico("chat")+'<span>Chats</span></button><button data-b="projects">'+ico("project")+'<span>Projects</span></button><button data-b="agent">'+ico("agent")+'<span>Agent Lab</span></button><button data-b="more">'+ico("more")+'<span>More</span></button>';document.body.append(n);$$("[data-b]").forEach(b=>b.onclick=()=>handleNav(b.dataset.b))}
+function syncBottom(){$$("#a5-bottomnav [data-b]").forEach(b=>b.classList.toggle("active",b.dataset.b===("screen"==="agent"?"agent":screen==="chat"?"chat":screen==="projects"?"projects":screen==="more"?"more":"home")))}
+function syncComposer(){const show=!["home","profile","settings","more","recycle"].includes(screen);document.body.classList.toggle("a5-hidecomposer",!show)}
 function init(){
- document.documentElement.dataset.theme=theme;buildSidebar();buildTopbar();
- if(localStorage.getItem("angel.sidebarCollapsed")==="1"){toggleSidebar()}
- $("#sidebarCollapse").onclick=toggleSidebar;$("#v3NewChat").onclick=()=>$("#newChat")?.click();
- $("#v3HomeNav").onclick=()=>{renderHome()};$("#agentLabNav").onclick=()=>window.dispatchEvent(new Event("angel-agent-lab-open"));$("#v3TasksNav").onclick=renderTasks;$("#v3MemoryNav").onclick=renderMemory;$("#v3FilesNav").onclick=renderFiles;$("#v3MultiNav").onclick=renderMultimodal;$("#v3ToolsNav").onclick=renderTools;$("#v3AssistantsNav").onclick=renderAssistants;$("#v3MarketNav").onclick=renderMarket;$("#v3ChartsNav").onclick=renderCharts;
- $("#v3SideUser").onclick=async()=>{const u=$("#aUser");u.classList.toggle("is-open");if(u.classList.contains("is-open"))await renderUserMenu(true)};
- $("#recentToggle").onclick=()=>{recentsMin=!recentsMin;localStorage.setItem("angel.recentsCollapsed",recentsMin?"1":"0");renderRecents()};
- $("#chatSearchOpen").onclick=()=>{const w=$("#chatSearchWrap");w.classList.add("open");$("#chatSearchInput").focus();searchList("")};
- $("#chatSearchInput").oninput=e=>searchList(e.target.value);$("#chatSearchInput").onkeydown=e=>{if(e.key==="Escape")$("#chatSearchWrap").classList.remove("open")};
- $("#globalChatSearch").onfocus=()=>{searchList("");$("#chatSearchWrap").classList.add("open");$("#chatSearchInput").focus()};
- $("#globalChatSearch").onkeydown=e=>{if(e.key==="Enter"){searchList(e.target.value);toast("Searching chats")}};
- $("#shareChatTop").onclick=()=>toast("Share link will appear here");
- $("#planOfferTop").onclick=()=>{renderUserMenu(true);$("#aUser").classList.add("is-open")};
- $("#chatMoreTop").onclick=()=>$("#chatMoreWrap").classList.toggle("open");
- document.querySelectorAll("[data-topmore]").forEach(b=>b.onclick=()=>toast(b.dataset.topmore));
- $("#aRecentList").onclick=e=>{const m=e.target.closest("[data-more]");if(m){e.stopPropagation();chatMenu(m.dataset.more,m);return}const r=e.target.closest("[data-chat]");if(r)toast("Opening "+r.querySelector(".aChatTitle").textContent)};
- document.addEventListener("click",e=>{if(!e.target.closest("#aUser"))$("#aUser")?.classList.remove("is-open");if(!e.target.closest("#chatMoreWrap"))$("#chatMoreWrap")?.classList.remove("open")});
- window.addEventListener("angel-refresh-recents",renderRecents);
- renderRecents();renderHome();const obs=new MutationObserver(()=>{if($("#page .welcome"))renderHome()});obs.observe($("#page"),{childList:true});
+ if(!$("#sidebar")||!$("#page"))return setTimeout(init,80);
+ document.body.classList.add("a5");legacy.assistants=$("#v3AssistantsNav");legacy.sideAuth=$("#sideAuth");legacy.newChat=$("#newChat");
+ const old=document.body.className;
+ if(isTablet()||localStorage.getItem("angel.sidebarCollapsed")==="1")document.body.classList.add("a5-collapsed");
+ setTheme(themeMode);
+ renderSidebar();buildTop();renderBottom();renderComposer();loadChats();
+ showScreen("home");
+ window.addEventListener("resize",()=>{if(innerWidth>1024&&document.body.classList.contains("a5-mobile-open"))$("#sidebar")?.classList.remove("a5-mobile-open");if(innerWidth<=1024&&!document.body.classList.contains("a5-collapsed")&&!isMobile()){document.body.classList.add("a5-collapsed");renderSidebar()}});
+ setInterval(()=>{const p=document.querySelector(".a5-quote p");if(p){const q=["“The best tool disappears into the work.”","“Make useful things beautifully.”","“Good systems reduce friction.”","“Ideas become real through iteration.”"];p.textContent=q[Math.floor(Math.random()*q.length)]}},42000);
+ sb5.auth.getSession().then(async({data})=>{const s=data.session;if(s){try{const r=await sb5.from("profiles").select("username,full_name,name").eq("id",s.user.id).maybeSingle();const n=r.data?.full_name||r.data?.name||r.data?.username||s.user.user_metadata?.full_name||s.user.user_metadata?.name||s.user.email?.split("@")[0];if(n){localStorage.setItem("angel.displayName",n);renderSidebar()}}catch{}}});
 }
-function searchList(q){const p=$("#chatSearchPopover");if(!p)return;const rows=recentData().filter(x=>!q||x.t.toLowerCase().includes(q.toLowerCase()));p.innerHTML='<div class="aSearchPopTitle">'+(q?"Search results":"Recent searches")+'</div>'+rows.map(x=>'<button class="aSearchResult"><b>'+esc(x.t)+'</b><span>Recent chat · '+x.m+'</span></button>').join("")+(rows.length?"":"<div style='padding:10px;color:var(--a-faint);font-size:9px'>No matching chats.</div>")}
-init();
-
-/* Approved design behavior */
-function applyApprovedDesign(){
-  const brandSub=document.querySelector(".aBrandSub");
-  if(brandSub) brandSub.textContent="personal assistant";
-  const avatar=document.querySelector(".aAvatar");
-  if(avatar) avatar.textContent="D";
-  const userName=document.querySelector(".aUserName");
-  if(userName && (userName.textContent==="Angel user" || !userName.textContent.trim())) userName.textContent="Danny";
-  const greetingSub=document.querySelector(".aGreetingSub");
-  if(greetingSub) greetingSub.remove();
-  document.querySelectorAll(".aHomeGrid .aRecentHome").forEach(x=>x.closest(".aPanel")?.remove());
-  document.querySelectorAll(".aHomeGrid .aHomeChat").forEach(x=>x.closest(".aPanel")?.remove());
-  const status=document.querySelector(".aStatus");
-  if(status){
-    const dot=status.querySelector(".aStatusDot");
-    if(dot) dot.style.boxShadow="none";
-    status.lastChild.textContent="Online / offline";
-  }
-  const searchBtn=document.querySelector(".aSearchBtn");
-  if(searchBtn){
-    searchBtn.title="Search chats";
-    const hint=searchBtn.querySelector("small");
-    if(hint) hint.style.opacity="";
-  }
-}
-const approvedDesignObserver=new MutationObserver(()=>applyApprovedDesign());
-approvedDesignObserver.observe(document.body,{childList:true,subtree:true});
-setTimeout(applyApprovedDesign,0);
+setTimeout(init,220);

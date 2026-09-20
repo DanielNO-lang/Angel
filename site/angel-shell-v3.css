@@ -83,3 +83,30 @@ body.a5 .composerInner{max-width:920px!important}body.a5 .composerTools,body.a5 
  .a5-mobilebar{display:flex;align-items:center;gap:8px}.a5-mobilebar button{height:32px;width:32px;border:0;background:transparent;color:var(--a5-text);display:grid;place-items:center}.a5-mobilebar strong{font-size:15px}
  .a5-home{padding:83px 14px 135px}.a5-homehead{margin-bottom:18px}.a5-greeting{font-size:37px}.a5-grid{grid-template-columns:1fr}.a5-actions{grid-template-columns:repeat(2,1fr);gap:6px}.a5-action{min-height:92px}.a5-chatpage{padding:83px 14px 135px}.a5-chatwelcome{margin-top:17px}.a5-chatwelcome h1{font-size:39px}.a5-chatwelcome p{font-size:10px}.a5-suggrid{grid-template-columns:1fr 1fr}.a5-page,.a5-morepage{padding:83px 14px 135px}.a5-grid3{grid-template-columns:1fr 1fr}.a5-simplegrid{grid-template-columns:1fr}.a5-toolpanel{right:10px;left:10px;top:auto;bottom:68px;width:auto;max-height:65vh}.a5-profilemenu,.a5-helppanel{position:fixed;left:10px;right:10px;bottom:68px;width:auto;max-height:72vh}.a5-helppanel{z-index:520}.a5-topbtn.offer{display:none}.a5-topbtn{height:30px;padding:0 8px}.a5-topbar{height:56px}.a5-theme-wrap,.a5-more-wrap{display:none}
 }
+
+/* Conversation stream: keeps the new shell's chat experience consistent with the home UI. */
+.a5-chatstream{max-width:900px;margin:0 auto;padding:14px 0 18px;display:grid;gap:14px}
+.a5-message{display:grid;grid-template-columns:72px minmax(0,1fr);gap:16px;padding:18px 0;border-bottom:1px solid var(--a5-line)}
+.a5-message-meta{font-size:8px;letter-spacing:.12em;color:var(--a5-faint);font-weight:650;padding-top:5px}
+.a5-message.user .a5-message-meta{color:var(--a5-muted)}
+.a5-message.assistant .a5-message-meta{color:var(--a5-accent2)}
+.a5-message-body{min-width:0}
+.a5-message-text{font-size:13px;line-height:1.78;color:var(--a5-text);white-space:pre-wrap;overflow-wrap:anywhere}
+.a5-message.user .a5-message-text{color:var(--a5-muted)}
+.a5-message-actions{display:flex;gap:5px;margin-top:10px;flex-wrap:wrap}
+.a5-message-actions button{height:26px;padding:0 8px;border:1px solid var(--a5-line);border-radius:7px;background:transparent;color:var(--a5-faint);font-size:8px;cursor:pointer}
+.a5-message-actions button:hover{background:var(--a5-panel);color:var(--a5-text);border-color:var(--a5-line2)}
+.a5-message-route{margin-top:9px;color:var(--a5-faint);font-size:8px}
+.a5-sources{margin-top:13px;padding-top:12px;border-top:1px solid var(--a5-line)}
+.a5-sources-title{font-size:8px;text-transform:uppercase;letter-spacing:.12em;color:var(--a5-faint);margin-bottom:8px}
+.a5-source-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.a5-source{display:block;min-width:0;padding:9px 10px;border:1px solid var(--a5-line);border-radius:9px;background:var(--a5-panel);color:var(--a5-muted);text-decoration:none}
+.a5-source:hover{background:var(--a5-panel2);color:var(--a5-text);border-color:var(--a5-line2)}
+.a5-source strong{display:block;font-size:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.a5-source span{display:block;font-size:7px;color:var(--a5-faint);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:760px){
+  .a5-chatstream{padding:6px 0 14px}
+  .a5-message{grid-template-columns:1fr;gap:6px;padding:14px 0}
+  .a5-source-grid{grid-template-columns:1fr}
+  .a5-message-text{font-size:12px;line-height:1.7}
+}

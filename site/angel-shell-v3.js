@@ -251,7 +251,7 @@ function showSearch(term){
   let p=$("#a5-searchresults");
   if(!p){p=document.createElement("div");p.id="a5-searchresults";p.className="a5-pop open";document.body.appendChild(p)}
   const t=term.trim().toLowerCase();const rows=chatData.filter(x=>!locked.has(x.id)&&(!t||x.title.toLowerCase().includes(t)));
-  p.innerHTML='<div class="a5-poptitle">Search chats</div>'+rows.slice(0,8).map(x=>'<button data-sr="'+esc(x.id)+'">'+ico("chat")+'<span style="margin-left:7px">'+esc(x.title)+'</span></button>').join("")+(rows.length?"":"<div class="a5-notice">No matching chats.</div>");
+  p.innerHTML='<div class="a5-poptitle">Search chats</div>'+rows.slice(0,8).map(x=>'<button data-sr="'+esc(x.id)+'">'+ico("chat")+'<span style="margin-left:7px">'+esc(x.title)+'</span></button>').join("")+(rows.length?'':'<div class="a5-notice">No matching chats.</div>');
   const sr=$("#a5-searchrow")?.getBoundingClientRect();
   if(isMobile()){p.style.left="10px";p.style.top="62px";p.style.right="10px"}else{p.style.left=((sr?.right||300)+8)+"px";p.style.top=(sr?.top||90)+"px"}
   p.querySelectorAll("[data-sr]").forEach(b=>b.onclick=()=>{p.remove();showScreen("chat",b.dataset.sr)});

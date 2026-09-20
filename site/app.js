@@ -111,7 +111,7 @@ async function call(path, body) {
 
 function ensureShellChat() {
   if (!document.body.classList.contains("a5")) return null;
-  window.AngelShell?.showScreen?.("chat");
+  if (!document.body.classList.contains("a5-chat")) window.AngelShell?.showScreen?.("chat");
   let streamHost = $("#a5-chatstream");
   if (!streamHost) {
     const page = $("#page");

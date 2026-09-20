@@ -478,14 +478,19 @@ async function visualMode(kind){
 function renderBottom(){
   if($("#a5-bottomnav"))return;
   const n=document.createElement("nav");n.id="a5-bottomnav";n.className="a5-bottomnav";
-  n.innerHTML='<button data-b="home">'+ico("home")+'<span>Home</span></button><button data-b="chat">'+ico("chat")+'<span>Chats</span></button><button data-b="projects">'+ico("project")+'<span>Projects</span></button><button data-b="agent">'+ico("agent")+'<span>Agent Lab</span></button><button data-b="more">'+ico("more")+'<span>More</span></button>';
-  $$("[data-b]").forEach(b=>b.onclick=()=>handleNav(b.dataset.b));
+  const items=signedIn
+    ? [["home","Home","home"],["chat","Chats","chat"],["projects","Projects","project"],["agent","Agent Lab","agent"],["more","More","more"]]
+    : [["home","Home","home"],["chat","Chats","chat"],["media","Media","media"],["more","More","more"],["profile","Log in","lock"]];
+  n.innerHTML=items.map(x=>'<button data-b="'+x[0]+'">'+ico(x[2])+'<span>'+x[1]+'</span></button>').join("");
+  n.querySelectorAll("[data-b]").forEach(b=>b.onclick=()=>{if(b.dataset.b==="profile")return window.AngelCore?.openModal?.();handleNav(b.dataset.b)});
+  document.body.append(n);
+  syncBottom();
 }
+
 function syncBottom(){
   $$("#a5-bottomnav [data-b]").forEach(b=>{
-    const target=screen==="agent"?"agent":screen==="chat"?"chat":screen==="projects"?"projects":screen==="more"?"more":"home";
+    const target=screen==="agent"?"agent":screen==="chat"?"chat":screen==="projects"?"projects":screen==="more"?"more":screen==="media"?"media":"home";
     b.classList.toggle("active",b.dataset.b===target);
-    if(!signedIn&&b.dataset.b==="projects")b.classList.add("a5-bottom-auth");
   });
 }
 function syncNav(){$$(".a5-navitem").forEach(b=>b.classList.toggle("active",b.dataset.nav===screen))}

@@ -24,24 +24,18 @@
     <section class="page" id="page"></section>
     <div class="activity hidden" id="activity"></div>
     <div class="composer">
-      <div class="composerInner">
-        <div class="composerTools">
-          <button class="toolBtn" id="micBtn" title="Voice input">◉</button>
-          <button class="toolBtn" id="researchBtn" title="Research">⌕</button>
-          <button class="toolBtn" id="uploadBtn" title="Attach file">＋</button>
-          <span class="toolState" id="toolState">Voice ready · Research off · Files ready</span>
-          <input id="fileInput" type="file" hidden accept="image/*,.pdf,.txt,.md,.csv,.doc,.docx,.ppt,.pptx,.xls,.xlsx">
-        </div>
-        <div class="composerBox">
-          <textarea id="message" rows="1" placeholder="Message Angel…"></textarea>
-          <button class="send" id="sendBtn" aria-label="Send">↑</button>
-        </div>
-        <div class="composerHint" id="footerStatus">Enter to send · Shift + Enter for a new line</div>
+      <div class="composerInner"></div>
+      <div class="a5-core-bridge" aria-hidden="true">
+        <button class="toolBtn" id="micBtn" tabindex="-1"></button>
+        <button class="toolBtn" id="researchBtn" tabindex="-1"></button>
+        <button class="toolBtn" id="uploadBtn" tabindex="-1"></button>
+        <input id="fileInput" type="file" hidden accept="image/*,.pdf,.txt,.md,.csv,.doc,.docx,.ppt,.pptx,.xls,.xlsx">
+        <button class="send" id="sendBtn" tabindex="-1"></button>
       </div>
     </div>
+    <div class="composerStatusBridge" id="footerStatus">Sign in to keep conversations across devices</div>
   </main>
 </div>
-
 <div class="modalBackdrop" id="modalBackdrop">
   <div class="modal authModal" id="authView">
     <div class="modalHead"><h2>Enter Angel</h2><button class="close" id="closeModal">×</button></div>
@@ -50,13 +44,11 @@
     <div class="authStatus" id="authStatus"></div>
   </div>
 </div>
-
 <div class="voicePanel" id="voicePanel">
   <div class="voiceTop"><span class="voiceTitle">Angel voice mode</span><button class="voiceClose" id="voiceClose">×</button></div>
   <div class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
   <div class="voiceActions"><button class="stop" id="voiceStop">Stop listening</button></div>
 </div>
-
 <div class="toast" id="toast"></div>
 <script type="module" src="/app.js"></script>
 <script type="module" src="/agent-lab-v2.js"></script>

@@ -2,17 +2,15 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#090a0d">
-<meta name="description" content="Angel, an AI workspace for conversation, research, projects, media, scheduling and agent work.">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#090b0f">
+<meta name="description" content="Angel, your AI workspace for conversation, research, projects, media and agent work.">
 <link rel="icon" href="/angel-logo.svg" type="image/svg+xml">
 <title>Angel</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;650&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/app.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;650;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/logo-motion.css">
-<link rel="stylesheet" href="/angel-ui-v2.css">
 <link rel="stylesheet" href="/angel-shell-v3.css">
 </head>
 <body>
@@ -23,41 +21,38 @@
     <header class="topbar"></header>
     <section class="page" id="page"></section>
     <div class="activity hidden" id="activity"></div>
+
     <div class="composer">
       <div class="composerInner">
-        <div class="composerTools">
-          <button class="toolBtn" id="micBtn" title="Voice input">◉</button>
-          <button class="toolBtn" id="researchBtn" title="Research">⌕</button>
-          <button class="toolBtn" id="uploadBtn" title="Attach file">＋</button>
-          <span class="toolState" id="toolState">Voice ready · Research off · Files ready</span>
-          <input id="fileInput" type="file" hidden accept="image/*,.pdf,.txt,.md,.csv,.doc,.docx,.ppt,.pptx,.xls,.xlsx">
-        </div>
+        <div class="composerBar" id="composerBar"></div>
         <div class="composerBox">
-          <textarea id="message" rows="1" placeholder="Message Angel…"></textarea>
+          <textarea id="message" rows="1" placeholder="Message Angel…" aria-label="Message Angel"></textarea>
           <button class="send" id="sendBtn" aria-label="Send">↑</button>
         </div>
-        <div class="composerHint" id="footerStatus">Enter to send · Shift + Enter for a new line</div>
+        <div class="composerHint" id="footerStatus">Guest mode · Chat is temporary and is not saved</div>
       </div>
     </div>
   </main>
 </div>
 
-<div class="modalBackdrop" id="modalBackdrop">
-  <div class="modal authModal" id="authView">
-    <div class="modalHead"><h2>Enter Angel</h2><button class="close" id="closeModal">×</button></div>
-    <p style="color:#8b8e94;font-size:11px;line-height:1.7">Continue securely with Google. Your conversations remain scoped to your account.</p>
-    <button class="authButton" id="googleBtn">Continue with Google</button>
-    <div class="authStatus" id="authStatus"></div>
-  </div>
+<div class="modalBackdrop" id="modalBackdrop" aria-hidden="true">
+  <section class="authModal" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+    <button class="authClose" id="closeModal" aria-label="Close">×</button>
+    <div class="authBrand"><img src="/angel-logo.svg" alt=""> <strong>Angel</strong></div>
+    <div id="authView"></div>
+  </section>
 </div>
 
 <div class="voicePanel" id="voicePanel">
-  <div class="voiceTop"><span class="voiceTitle">Angel voice mode</span><button class="voiceClose" id="voiceClose">×</button></div>
-  <div class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-  <div class="voiceActions"><button class="stop" id="voiceStop">Stop listening</button></div>
+  <div class="voiceTop"><strong>Angel voice mode</strong><button id="voiceClose" aria-label="Close">×</button></div>
+  <div class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <p>Conversational voice stays separate from dictation. Use the microphone to transcribe, or voice mode to speak with Angel.</p>
+  <button class="voiceStop" id="voiceStop">Stop listening</button>
 </div>
 
 <div class="toast" id="toast"></div>
+<input id="fileInput" type="file" hidden accept="image/*,.pdf,.txt,.md,.csv,.doc,.docx,.ppt,.pptx,.xls,.xlsx">
+
 <script type="module" src="/app.js"></script>
 <script type="module" src="/agent-lab-v2.js"></script>
 <script type="module" src="/angel-shell-v3.js"></script>

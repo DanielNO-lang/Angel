@@ -416,3 +416,42 @@ body:not(.a5-collapsed) .a5-collapsed{display:none}
 body:not(.a5-collapsed) .a5-expanded{display:flex}
 body.a5-hidecomposer .composer{display:none}
 @media(max-width:760px){body.a5-collapsed .sidebar{width:min(320px,86vw)}body.a5-collapsed .app{grid-template-columns:1fr}body.a5-collapsed .composer{left:0}body.a5-collapsed .a5-collapsed{display:none!important}}
+
+
+/* Agent Lab foundation retained inside the new shell */
+.agentLab{max-width:1120px;margin:0 auto;padding:6px 0 80px}
+.agentHero{display:grid;grid-template-columns:1.3fr .7fr;gap:12px}
+.labCard{border:1px solid var(--line);background:var(--surface);border-radius:16px;padding:15px;box-shadow:none}
+.labCard h1,.labCard h2,.labCard h3{color:var(--paper);margin:6px 0}
+.labMuted{color:var(--muted);font-size:9px;line-height:1.55}
+.labSectionTitle{font-size:8px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent2)}
+.labOverview{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:12px 0}
+.labMetric{border:1px solid var(--line);background:var(--surface2);border-radius:12px;padding:12px}
+.labMetric b{display:block;font-size:20px;color:var(--paper)}
+.labMetric span{display:block;margin-top:4px;color:var(--faint);font-size:7px;text-transform:uppercase;letter-spacing:.12em}
+.labRun{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.labGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.labInput{width:100%;border:1px solid var(--line);background:var(--bg2);color:var(--paper);border-radius:9px;padding:9px;margin:4px 0;outline:0;resize:vertical}
+.labInput:focus{border-color:rgba(139,108,255,.35)}
+.labActions{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
+.labBtn{border:1px solid var(--line2);background:var(--surface2);color:var(--paper);padding:8px 10px;border-radius:8px;cursor:pointer;font-size:9px}
+.labBtn.primary{background:var(--accent);border-color:var(--accent);color:white}
+.labList{display:grid;gap:6px;margin-top:8px}
+.labItem{border:1px solid var(--line);background:var(--surface2);border-radius:9px;padding:9px;display:flex;justify-content:space-between;gap:8px}
+.labItem b{display:block;color:var(--paper);font-size:9px}
+.labItem small{display:block;color:var(--faint);font-size:7px;margin-top:3px;line-height:1.4}
+.labBadge{font-size:7px;color:var(--accent2);border:1px solid var(--line);border-radius:999px;padding:4px 6px;white-space:nowrap}
+.labDanger{border:1px solid rgba(255,109,115,.25);background:rgba(255,109,115,.04);padding:9px;border-radius:9px;color:var(--danger)}
+.labResult{white-space:pre-wrap;color:var(--text);line-height:1.55;font-size:9px;margin-top:9px}
+.labTimeline{display:grid;gap:6px;margin-top:7px}
+.labStep{display:grid;grid-template-columns:23px 1fr auto;gap:7px;align-items:start;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--surface2)}
+.labStepMark{width:21px;height:21px;border-radius:50%;border:1px solid var(--line2);display:grid;place-items:center;color:var(--accent2);font-size:8px}
+.labStep small{display:block;color:var(--faint);font-size:7px;margin-top:2px}
+.labStepState{font-size:7px;text-transform:uppercase;color:var(--faint)}
+.labQuietLine{height:1px;background:var(--line);margin:12px 0}
+.labEmpty{padding:9px;color:var(--faint);font-size:8px}
+.labCheck{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--good);margin-right:5px}
+@media(max-width:760px){
+  .agentHero,.labRun,.labGrid{grid-template-columns:1fr}
+  .labOverview{grid-template-columns:1fr 1fr}
+}

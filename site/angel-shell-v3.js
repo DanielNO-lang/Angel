@@ -92,11 +92,12 @@ function renderSidebar(){
     '<div class="a5-searchrow" id="a5-searchrow"><button class="a5-searchbutton" id="a5-searchbutton" title="Search chats">'+ico("search")+'</button><input id="a5-searchinput" class="a5-searchinput" placeholder="Search chats…" autocomplete="off"></div>'+
     '<button class="a5-newchat" data-nav="chat"><span class="a5-plus">＋</span><span>New chat</span></button>'+
     navBtn("home","Home","home")+
-    '<div class="a5-scroll"><div class="a5-section">Tools</div>'+
-    tools.map(x=>navBtn(x[0],x[1],x[2])).join("")+
-    '<div class="a5-section">Recents</div><div class="a5-chatlist" id="a5-recents"></div>'+
+    '<div class="a5-scroll">'+
     '<button class="a5-subtoggle" data-toggle="pinned"><span>Pinned</span><b>›</b></button><div id="a5-pinned" class="a5-chatlist"></div>'+
-    '<button class="a5-subtoggle" data-toggle="archived"><span>Archived</span><b>›</b></button><div id="a5-archived" class="a5-chatlist"></div></div>'+
+    '<button class="a5-subtoggle" data-toggle="archived"><span>Archived</span><b>›</b></button><div id="a5-archived" class="a5-chatlist"></div>'+
+    '<div class="a5-section">Tools</div>'+
+    tools.map(x=>navBtn(x[0],x[1],x[2])).join("")+
+    '<div class="a5-section">Recents</div><div class="a5-chatlist" id="a5-recents"></div></div>'+
     '<div class="a5-quote"><p>'+["“Make useful things beautifully.”","“A good day can start small.”","“Keep the useful. Lose the noise.”","“Make room for the interesting parts.”"][Math.floor(Math.random()*4)]+'</p></div>'+
     '<div class="a5-profile" id="a5-profile"><button class="a5-profilebtn" id="a5-profilebtn"><span class="a5-avatar">'+initials(userName())+'</span><span style="min-width:0"><span class="a5-name">'+esc(userName())+'</span><span class="a5-plan">'+(guest?"Guest":"Free plan")+'</span></span><span style="margin-left:auto;color:var(--a5-faint)">›</span></button><div class="a5-profilemenu" id="a5-profilemenu"></div><div class="a5-helppanel" id="a5-helppanel"></div></div>'+
     '</div>';

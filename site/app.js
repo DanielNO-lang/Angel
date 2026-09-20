@@ -1,25 +1,608 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const SUPABASE_URL="https://ybvyveonfvixsfusoqqz.supabase.co";const SUPABASE_KEY="sb_publishable_N5oJC6pzx87-z3pO8MgSwQ_djYeX8o9";const supabase=createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});const base=`${SUPABASE_URL}/functions/v1/`;const $=s=>document.querySelector(s);const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));const meta=u=>u?.user_metadata||{};
-let session=null,profile=null,conversationId=null,history=[],sending=false,researchMode=false,recording=false,recorder=null,stream=null,currentPage="angel",lastUserPrompt="";
-const state={voiceStyle:localStorage.getItem("angel.voiceStyle")||"warm",density:localStorage.getItem("angel.density")||"comfortable",motion:localStorage.getItem("angel.motion")||"full"};
-const models=[{id:"astra",name:"GPT-6 Astra",maker:"OpenAI",kind:"Frontier",tags:["reasoning","coding","computer use","research","documents"],note:"Hardest end-to-end work"},{id:"gemini",name:"Gemini 3.8 Flash",maker:"Google",kind:"Multimodal",tags:["agentic","vision","audio","PDF","search","code"],note:"Long-horizon agent loops"},{id:"grok",name:"Grok 4.6",maker:"xAI",kind:"Frontier",tags:["reasoning","coding","search","image","video","voice"],note:"Fast frontier generalist"},{id:"deepseek",name:"DeepSeek V4 Pro",maker:"DeepSeek",kind:"Reasoning",tags:["agents","coding","1M context","tools"],note:"Heavy reasoning and coding"},{id:"mistral",name:"Mistral Medium 3.5",maker:"Mistral",kind:"Multimodal",tags:["agents","coding","vision","tools"],note:"Agentic and coding specialist"},{id:"llama",name:"Llama 4 Maverick / Scout",maker:"Meta",kind:"Open",tags:["multimodal","10M context","open weights"],note:"Open multimodal foundation"},{id:"perplexity",name:"Sonar Deep Research",maker:"Perplexity",kind:"Research",tags:["web","citations","deep research","async"],note:"Exhaustive source synthesis"},{id:"stable",name:"Stable Diffusion",maker:"Stability AI",kind:"Creative",tags:["image generation","editing","creative"],note:"Image creation layer"},{id:"eleven",name:"ElevenAgents",maker:"ElevenLabs",kind:"Voice Agent",tags:["voice","tools","telephony","multimodal"],note:"Voice-native agent layer"},{id:"hume",name:"EVI 4 mini",maker:"Hume",kind:"Voice",tags:["speech-to-speech","emotion","turn-taking"],note:"Expressive real-time voice"},{id:"midjourney",name:"Midjourney",maker:"Midjourney",kind:"Creative",tags:["image","art direction"],note:"Manual/approved connector only"}];
-function username(u){return profile?.username||meta(u).user_name||meta(u).preferred_username||meta(u).full_name||meta(u).name||u?.email?.split("@")[0]||"Angel user"}function initials(u){const n=username(u).trim();return(n.split(/\s+/).map(x=>x[0]).join("").slice(0,2)||"A").toUpperCase()}function toast(text){const t=$("#toast");t.textContent=text;t.classList.add("show");clearTimeout(toast.timer);toast.timer=setTimeout(()=>t.classList.remove("show"),2400)}function setActivity(text,visible=true,done=false){const a=$("#activity");a.textContent="";a.classList.toggle("hidden",!visible);a.dataset.state=done?"done":"active";if(visible){const trace=document.createElement("span");trace.className="activityTrace";const label=document.createElement("span");label.textContent=text;a.append(trace,label)}}function markNav(id){document.querySelectorAll(".navBtn").forEach(x=>x.classList.remove("active"));$("#"+id)?.classList.add("active")}
-function account(u){const signed=!!u;$("#sideAuthText").textContent=signed?"Sign out":"Sign in";$("#authBtn").textContent=signed?"Account":"Sign in";$("#footerStatus").textContent=signed?"Private conversation · synced to your account":"Sign in to keep conversations across devices";$("#sideUser").innerHTML=signed?`<div class="avatar">${esc(initials(u))}</div><div class="accountText"><strong>${esc(username(u))}</strong><span>${esc(u.email||"")}</span></div>`:`<div class="avatar">A</div><div class="accountText"><strong>Guest mode</strong><span>Sign in to save conversations</span></div>`}
-async function auth(){const{data}=await supabase.auth.getSession();session=data.session||null;profile=null;if(session){const r=await supabase.from("profiles").select("*").eq("id",session.user.id).maybeSingle();profile=r.data||null}account(session?.user||null);return session}async function call(path,body){if(!session)throw Error("Please sign in to use Angel.");const r=await fetch(path,{method:"POST",headers:{Authorization:`Bearer ${session.access_token}`,"Content-Type":"application/json",apikey:SUPABASE_KEY},body:JSON.stringify(body)});const d=await r.json().catch(()=>({}));if(!r.ok){const detail=Array.isArray(d.detail)?d.detail.join(" · "):d.detail;throw Error(d.error||detail||`Request failed (${r.status})`)}return d}
-function logoMarkup(size="small"){return`<span class="angelLogo ${size}" aria-hidden="true"><span class="logoOrbit logoOrbitA"></span><span class="logoOrbit logoOrbitB"></span><img src="/angel-logo.svg" alt=""></span>`}
-function welcome(){currentPage="angel";markNav("angelNav");$("#page").innerHTML=`<section class="welcome"><div class="heroLogo">${logoMarkup("hero")}</div><div class="welcomeKicker">PRIVATE INTELLIGENCE · ${session?"READY":"GUEST"}</div><h1>Think deeper.<br><em>Make it real.</em></h1><p>Angel is a private intelligence workspace that can route a task through the right model, research the live web, understand files and images, speak, and grow into an agent that can actually work.</p><div class="capGrid"><button class="capCard" data-prompt="Research this topic deeply and give me the important findings with sources."><span class="capIcon">⌁</span><b>Deep research</b><small>Search, cross-check, synthesize and show the trail.</small></button><button class="capCard" data-prompt="Help me turn this idea into a practical plan I can actually execute."><span class="capIcon">◇</span><b>Build an idea</b><small>Move from a rough thought to a concrete workflow.</small></button><button class="capCard" data-prompt="Think through this problem carefully, challenge weak assumptions, and give me your best answer."><span class="capIcon">◎</span><b>Think with me</b><small>Reason first. Write second. Make the answer useful.</small></button><button class="capCard" data-page="intelligence"><span class="capIcon">✦</span><b>Intelligence layer</b><small>See the model families Angel can orchestrate as they become connected.</small></button></div><div class="heroFoot"><span>${logoMarkup("tiny")}</span><span>Angel / private intelligence system</span><span class="heroLine"></span><span>v3 foundation</span></div></section>`;document.querySelectorAll("[data-prompt]").forEach(b=>b.onclick=()=>{$("#message").value=b.dataset.prompt;autoGrow();send()});document.querySelectorAll("[data-page]").forEach(b=>b.onclick=showIntelligence);setActivity("",false)}
-function ensureMessages(){if(!$("#messages"))$("#page").innerHTML=`<div id="messages" class="messages"></div>`;return $("#messages")}function addMessage(role,text,sources=[],provider=""){const wrap=document.createElement("article");wrap.className=`msg ${role}`;const roleEl=document.createElement("div");roleEl.className="msgRole";roleEl.textContent=role==="user"?"YOU":"ANGEL";const body=document.createElement("div");body.className="msgBody";const p=document.createElement("p");p.className="msgText";p.textContent=text;body.appendChild(p);if(role==="assistant"){const actions=document.createElement("div");actions.className="msgActions";actions.innerHTML=`<button class="mini copy">Copy</button><button class="mini speak">Listen</button><button class="mini regen">Regenerate</button>`;actions.querySelector(".copy").onclick=async()=>{await navigator.clipboard?.writeText(text);toast("Copied")};actions.querySelector(".speak").onclick=()=>speak(text);actions.querySelector(".regen").onclick=()=>{if(lastUserPrompt){$("#message").value=lastUserPrompt;autoGrow();send()}};body.appendChild(actions);if(provider){const detail=document.createElement("div");detail.className="providerLine";detail.textContent=`Routed through ${provider}`;body.appendChild(detail)}}if(sources?.length){const box=document.createElement("div");box.className="sources";box.innerHTML=`<div class="sourcesTitle">Sources · ${sources.length}</div><div class="sourceGrid">${sources.slice(0,8).map((s,i)=>`<a class="source" target="_blank" rel="noopener" href="${esc(s.url||s.link||"#")}"><strong>${i+1}. ${esc(s.title||"Source")}</strong><span>${esc(s.url||s.link||s.snippet||"")}</span></a>`).join("")}</div>`;body.appendChild(box)}wrap.append(roleEl,body);ensureMessages().appendChild(wrap);requestAnimationFrame(()=>wrap.scrollIntoView({behavior:"smooth",block:"end"}));return wrap}
-function activityFor(plan,research){if(research)return"Preparing research";if(plan?.type==="coding")return"Planning the build";if(plan?.type==="document_analysis")return"Reading the material";if(plan?.type==="vision")return"Understanding the image";if(plan?.type==="image_generation")return"Preparing the creative engine";return"Thinking"}
-async function send(){if(sending||!$("#message").value.trim())return;if(!session){openModal();return}const text=$("#message").value.trim();$("#message").value="";autoGrow();lastUserPrompt=text;sending=true;addMessage("user",text);history.push({role:"user",content:text});setActivity("Preparing",true);let thinking=null;try{const plan=await call(`${base}angel-orchestrator`,{task:text,mode:researchMode?"research":"auto"});setActivity(activityFor(plan,researchMode||plan.research_required),true);let sources=[];const context=[];if(researchMode||plan.research_required){setActivity("Searching for useful sources",true);const research=await call(`${base}angel-tools`,{action:"research",query:text,max_results:8});sources=research.results||[];if(research.answer)context.push({role:"system",content:"Deep research report:\n"+research.answer});if(sources.length){setActivity(`Reading ${sources.length} sources`,true);context.push({role:"system",content:"Retrieved web research. Use it when relevant. Do not invent citations.\n"+sources.map((s,i)=>`[${i+1}] ${s.title||"Source"}\n${s.url||s.link||""}\n${s.snippet||s.description||""}`).join("\n\n")})}else toast("Research returned no sources, continuing normally")}setActivity("Routing intelligence",true);thinking=addMessage("assistant","Working…");const reply=await call(`${base}angel-chat`,{messages:[...context,...history.slice(-20)],mode:plan?.type||"auto",research:!!(researchMode||plan.research_required)});thinking.remove();addMessage("assistant",reply.reply||"I’m ready.",sources,`${reply.provider||"auto"}${reply.model?` · ${reply.model}`:""}`);history.push({role:"assistant",content:reply.reply||""});conversationId=reply.conversation_id||conversationId;setActivity("Complete",true,true);setTimeout(()=>setActivity("",false),900)}catch(e){thinking?.remove();addMessage("assistant",e.message||"Angel could not complete that request.");setActivity("Needs attention",true,true);setTimeout(()=>setActivity("",false),1800)}finally{sending=false}}
-async function speak(text){if(!session)return openModal();try{toast("Preparing voice");const d=await call(`${base}angel-tools`,{action:"speak",text,voice:state.voiceStyle==="calm"?"autumn":"hannah"});if(!d.audio_base64)throw Error("Voice output was empty.");const b=atob(d.audio_base64),a=new Uint8Array(b.length);for(let i=0;i<b.length;i++)a[i]=b.charCodeAt(i);const au=new Audio(URL.createObjectURL(new Blob([a],{type:d.mime_type||"audio/wav"})));await au.play()}catch(e){toast(e.message||"Voice is unavailable")}}
-async function toggleMic(){if(!session)return openModal();if(recording){recorder?.stop();return}try{stream=await navigator.mediaDevices.getUserMedia({audio:true});const chunks=[];recorder=new MediaRecorder(stream);recorder.ondataavailable=e=>chunks.push(e.data);recorder.onstop=async()=>{recording=false;$("#micBtn").classList.remove("active");$("#voicePanel").classList.remove("open");stream?.getTracks().forEach(t=>t.stop());setActivity("Transcribing",true);try{const blob=new Blob(chunks,{type:recorder.mimeType||"audio/webm"}),reader=new FileReader();reader.onload=async()=>{try{const d=await call(`${base}angel-tools`,{action:"transcribe",audio_base64:reader.result,mime_type:blob.type});$("#message").value=d.text||"";autoGrow();setActivity("Voice captured",true,true);setTimeout(()=>setActivity("",false),800);if(d.text)send()}catch(e){toast(e.message||"Transcription failed");setActivity("",false)}};reader.readAsDataURL(blob)}catch(e){toast(e.message);setActivity("",false)}};recorder.start();recording=true;$("#micBtn").classList.add("active");$("#voicePanel").classList.add("open");setActivity("Listening",true)}catch{toast("Microphone access is unavailable")}}
-async function uploadFile(file){if(!session)return openModal();addMessage("user",`Attached · ${file.name}`);setActivity(`Reading ${file.name}`,true);const reader=new FileReader();reader.onload=async()=>{try{const data=String(reader.result).split(",")[1]||"";if(file.type.startsWith("image/")){const r=await call(`${base}angel-vision`,{image_base64:data,mime_type:file.type,prompt:"Analyze this image carefully. Describe useful visible details, read text when possible, and explain anything relevant to the user."});addMessage("assistant",r.reply||r.answer||"Image analyzed.")}else{const r=await call(`${base}angel-documents`,{action:"analyze",file_name:file.name,mime_type:file.type||"application/octet-stream",data_base64:data,prompt:"Analyze this document and give the user the important information clearly."});addMessage("assistant",r.answer||r.reply||r.text||"Document analyzed.")}setActivity("Complete",true,true);setTimeout(()=>setActivity("",false),800)}catch(e){addMessage("assistant",e.message||"The file could not be analyzed.");setActivity("File analysis failed",true,true)}};reader.readAsDataURL(file)}
-async function showHistory(){currentPage="history";markNav("historyNav");if(!session)return openModal();setActivity("",false);const r=await supabase.from("conversations").select("id,title,updated_at").eq("user_id",session.user.id).order("updated_at",{ascending:false}).limit(50),items=r.data||[];$("#page").innerHTML=`<h1 class="pageTitle">History</h1><div class="list">${items.length?items.map(x=>`<button class="listItem" data-id="${esc(x.id)}"><span><b>${esc(x.title||"Conversation")}</b><small>${new Date(x.updated_at).toLocaleString()}</small></span><span>›</span></button>`).join(""):`<div class="emptyState">No saved conversations yet.</div>`}</div>`;document.querySelectorAll(".listItem").forEach(b=>b.onclick=()=>loadConversation(b.dataset.id))}
-async function loadConversation(id){conversationId=id;const r=await supabase.from("messages").select("role,content,created_at").eq("conversation_id",id).order("created_at",{ascending:true});history=(r.data||[]).map(x=>({role:x.role,content:x.content}));markNav("angelNav");currentPage="angel";$("#page").innerHTML=`<div id="messages" class="messages"></div>`;(r.data||[]).forEach(x=>addMessage(x.role==="assistant"?"assistant":"user",x.content));toast("Conversation restored")}
-function showExplore(){currentPage="explore";markNav("exploreNav");$("#page").innerHTML=`<section class="workspace"><div class="sectionEyebrow">CAPABILITIES</div><h1 class="pageTitle">What Angel can become</h1><p class="lede">A modular intelligence layer instead of a single-model chatbot. Each capability can be upgraded without redesigning the whole system.</p><div class="exploreGrid">${[["Research","Live web retrieval, source cards, deep research and future async investigations."],["Vision + documents","Images, PDFs and structured files can become context, not dead attachments."],["Voice","Transcription and speech today, expressive real-time speech-to-speech as a future voice lane."],["Agents","Plan → use tools → observe → verify → act. The foundation is designed for longer workflows."],["Creative","Image generation/editing can route to specialist creative models when credentials are connected."],["Computer use","A future controlled browser/desktop layer for tasks that require actual interaction."]].map(x=>`<article class="feature"><span class="featureGlyph">✦</span><h3>${x[0]}</h3><p>${x[1]}</p></article>`).join("")}</div></section>`}
-async function showIntelligence(){currentPage="intelligence";markNav("intelligenceNav");setActivity("Checking connected intelligence",true);let status={};if(session){try{status=await call(`${base}angel-tools`,{action:"status"})}catch{}}setActivity("",false);const flags=status.providers||status;$("#page").innerHTML=`<section class="workspace"><div class="sectionEyebrow">INTELLIGENCE CONTROL</div><div class="intelHead"><div><h1 class="pageTitle">Angel Intelligence</h1><p class="lede">One interface, many minds. Angel chooses by capability, speed, context and availability. You do not have to babysit model names.</p></div><div class="intelPulse"><span></span> adaptive routing</div></div><div class="modelGrid">${models.map(m=>{const configured=!!flags[m.id]||!!flags[m.maker?.toLowerCase()];const manual=m.id==="midjourney";return`<article class="modelCard ${configured?"connected":""} ${manual?"manual":""}"><div class="modelTop"><div><span class="modelKind">${m.kind}</span><h3>${m.name}</h3><small>${m.maker}</small></div><span class="modelStatus">${manual?"manual":configured?"connected":"ready slot"}</span></div><p>${m.note}</p><div class="tags">${m.tags.map(t=>`<span>${t}</span>`).join("")}</div></article>`}).join("")}</div><div class="intelNote"><b>Connection model:</b> provider adapters are server-side capability slots. They become active when their credentials are configured. Midjourney is deliberately manual because its current official guidance prohibits general third-party API automation. ${session?"":"Sign in to inspect live connection status."}</div></section>`}
-function showProjects(){currentPage="projects";markNav("projectsNav");$("#page").innerHTML=`<section class="workspace"><div class="sectionEyebrow">WORKSPACE</div><h1 class="pageTitle">Projects</h1><p class="lede">Project memory, files, instructions, tools and long-running agents will live here.</p><div class="coming"><div class="comingLogo">${logoMarkup("medium")}</div><b>Project engine is next</b><span>The foundation is ready for persistent project context and agent workflows.</span></div></section>`}
-function showSettings(){currentPage="settings";markNav("settingsNav");$("#page").innerHTML=`<section class="workspace"><div class="sectionEyebrow">CONTROL</div><h1 class="pageTitle">Settings</h1><div class="settingsCard"><div class="setting"><label>Voice style</label><p>Controls the default voice profile Angel requests.</p><select class="select" id="voiceStyle"><option value="warm">Warm</option><option value="calm">Calm</option></select></div><div class="setting"><label>Interface density</label><p>Choose how much breathing room the workspace uses.</p><select class="select" id="density"><option value="comfortable">Comfortable</option><option value="compact">Compact</option></select></div><div class="setting"><label>Motion</label><p>Transitions and activity animations can be reduced without disabling functionality.</p><select class="select" id="motion"><option value="full">Full motion</option><option value="reduced">Reduced motion</option></select></div><div class="setting"><label>Provider routing</label><p>Angel routes automatically. Provider keys stay server-side and are never placed in this browser.</p><div class="routePill">AUTO · CAPABILITY FIRST</div></div></div></section>`;$("#voiceStyle").value=state.voiceStyle;$("#density").value=state.density;$("#motion").value=state.motion;$("#voiceStyle").onchange=e=>{state.voiceStyle=e.target.value;localStorage.setItem("angel.voiceStyle",state.voiceStyle);toast("Voice preference saved")};$("#density").onchange=e=>{state.density=e.target.value;localStorage.setItem("angel.density",state.density);document.body.dataset.density=state.density};$("#motion").onchange=e=>{state.motion=e.target.value;localStorage.setItem("angel.motion",state.motion);document.body.dataset.motion=state.motion}}
-function openModal(){$("#modalBackdrop").classList.add("open")}function closeModal(){$("#modalBackdrop").classList.remove("open")}async function signIn(){const{error}=await supabase.auth.signInWithOAuth({provider:"google",options:{redirectTo:window.location.origin+"/app.html"}});if(error)$("#authStatus").textContent=error.message}async function signOut(){await supabase.auth.signOut();session=null;profile=null;history=[];conversationId=null;account(null);closeModal();welcome();toast("Signed out")}function autoGrow(){const t=$("#message");t.style.height="auto";t.style.height=Math.min(t.scrollHeight,170)+"px"}function newChat(){conversationId=null;history=[];lastUserPrompt="";welcome();$("#message").focus()}function toggleResearch(){researchMode=!researchMode;$("#researchBtn").classList.toggle("active",researchMode);$("#toolState").textContent=`Voice ready · Research ${researchMode?"on":"off"} · Files ready`;toast(researchMode?"Research mode on":"Research mode off")}function toggleDrawer(){if(innerWidth<=900){$("#sidebar").classList.toggle("open");$("#drawerShade").classList.toggle("open")}}function closeDrawer(){$("#sidebar").classList.remove("open");$("#drawerShade").classList.remove("open")}
-$("#sendBtn").onclick=send;$("#message").addEventListener("input",autoGrow);$("#message").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();send()}});$("#micBtn").onclick=toggleMic;$("#researchBtn").onclick=toggleResearch;$("#uploadBtn").onclick=()=>$("#fileInput").click();$("#fileInput").onchange=e=>{if(e.target.files?.[0])uploadFile(e.target.files[0]);e.target.value=""};$("#newChat").onclick=()=>{closeDrawer();newChat()};$("#angelNav").onclick=()=>{closeDrawer();welcome()};$("#historyNav").onclick=()=>{closeDrawer();showHistory()};$("#exploreNav").onclick=()=>{closeDrawer();showExplore()};$("#intelligenceNav").onclick=()=>{closeDrawer();showIntelligence()};$("#projectsNav").onclick=()=>{closeDrawer();showProjects()};$("#settingsNav").onclick=()=>{closeDrawer();showSettings()};$("#sideAuth").onclick=()=>session?signOut():openModal();$("#authBtn").onclick=()=>session?showSettings():openModal();$("#googleBtn").onclick=signIn;$("#closeModal").onclick=closeModal;$("#modalBackdrop").onclick=e=>{if(e.target.id==="modalBackdrop")closeModal()};$("#voiceClose").onclick=()=>{recorder?.stop();$("#voicePanel").classList.remove("open")};$("#voiceStop").onclick=()=>recorder?.stop();$("#mobileMenu").onclick=toggleDrawer;$("#drawerShade").onclick=closeDrawer;document.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="k"){e.preventDefault();$("#message").focus()}if(e.key==="Escape"){closeModal();closeDrawer()}});supabase.auth.onAuthStateChange(async()=>{await auth();if(currentPage==="angel"&&!$("#messages"))welcome()});document.body.dataset.density=state.density;document.body.dataset.motion=state.motion;auth().then(welcome);
+const SUPABASE_URL = "https://ybvyveonfvixsfusoqqz.supabase.co";
+const SUPABASE_KEY = "sb_publishable_N5oJC6pzx87-z3pO8MgSwQ_djYeX8o9";
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+});
+const base = `${SUPABASE_URL}/functions/v1/`;
+
+const $ = (selector) => document.querySelector(selector);
+const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (c) => ({
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+}[c]));
+
+let session = null;
+let profile = null;
+let conversationId = null;
+let history = [];
+let sending = false;
+let researchMode = false;
+let recording = false;
+let recorder = null;
+let stream = null;
+let lastUserPrompt = "";
+
+const state = {
+  voiceStyle: localStorage.getItem("angel.voiceStyle") || "warm",
+  density: localStorage.getItem("angel.density") || "comfortable",
+  motion: localStorage.getItem("angel.motion") || "full"
+};
+
+function username(user = session?.user) {
+  return profile?.display_name
+    || profile?.username
+    || user?.user_metadata?.full_name
+    || user?.user_metadata?.name
+    || user?.email?.split("@")[0]
+    || "Angel user";
+}
+
+function initials(user = session?.user) {
+  const value = username(user).trim();
+  return (value.split(/\s+/).map((part) => part[0]).join("").slice(0, 2) || "A").toUpperCase();
+}
+
+function toast(message) {
+  const node = $("#toast");
+  if (!node) return;
+  node.textContent = message;
+  node.classList.add("show");
+  clearTimeout(toast.timer);
+  toast.timer = setTimeout(() => node.classList.remove("show"), 2400);
+}
+
+function setActivity(text, visible = true, done = false) {
+  const node = $("#activity");
+  if (!node) return;
+  node.textContent = "";
+  node.classList.toggle("hidden", !visible);
+  node.dataset.state = done ? "done" : "active";
+  if (!visible) return;
+  const trace = document.createElement("span");
+  trace.className = "activityTrace";
+  const label = document.createElement("span");
+  label.textContent = text;
+  node.append(trace, label);
+}
+
+async function auth() {
+  const result = await supabase.auth.getSession();
+  session = result.data.session || null;
+  profile = null;
+  if (session) {
+    const q = await supabase
+      .from("profiles")
+      .select("username,display_name,avatar_url")
+      .eq("id", session.user.id)
+      .maybeSingle();
+    if (!q.error) profile = q.data || null;
+  }
+  const footer = $("#footerStatus");
+  if (footer) {
+    footer.textContent = session
+      ? "Private conversation · synced to your account"
+      : "Sign in to keep conversations across devices";
+  }
+  document.dispatchEvent(new CustomEvent("angel-auth-changed", {
+    detail: { signedIn: !!session, user: session?.user || null, profile }
+  }));
+  return session;
+}
+
+async function call(path, body) {
+  if (!session) throw new Error("Please sign in to use Angel.");
+  const response = await fetch(path, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${session.access_token}`,
+      "Content-Type": "application/json",
+      apikey: SUPABASE_KEY
+    },
+    body: JSON.stringify(body)
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    const detail = Array.isArray(data.detail) ? data.detail.join(" · ") : data.detail;
+    throw new Error(data.error || detail || `Request failed (${response.status})`);
+  }
+  return data;
+}
+
+function ensureShellChat() {
+  if (!document.body.classList.contains("a5")) return null;
+  window.AngelShell?.showScreen?.("chat");
+  let streamHost = $("#a5-chatstream");
+  if (!streamHost) {
+    const page = $("#page");
+    if (!page) return null;
+    page.innerHTML = '<section class="a5-chatpage"><div id="a5-chatstream" class="a5-chatstream"></div></section>';
+    streamHost = $("#a5-chatstream");
+  }
+  return streamHost;
+}
+
+function renderSources(host, sources) {
+  if (!sources?.length) return;
+  const box = document.createElement("div");
+  box.className = "a5-sources";
+  box.innerHTML =
+    `<div class="a5-sources-title">Sources · ${sources.length}</div>` +
+    `<div class="a5-source-grid">${sources.slice(0, 8).map((source, index) =>
+      `<a class="a5-source" target="_blank" rel="noopener" href="${esc(source.url || source.link || "#")}">
+        <strong>${index + 1}. ${esc(source.title || "Source")}</strong>
+        <span>${esc(source.url || source.link || source.snippet || "")}</span>
+      </a>`
+    ).join("")}</div>`;
+  host.appendChild(box);
+}
+
+function addShellMessage(role, text, sources = [], provider = "") {
+  const host = ensureShellChat();
+  if (!host) return null;
+
+  const wrap = document.createElement("article");
+  wrap.className = `a5-message ${role}`;
+
+  const meta = document.createElement("div");
+  meta.className = "a5-message-meta";
+  meta.textContent = role === "user" ? username().toUpperCase() : "ANGEL";
+
+  const body = document.createElement("div");
+  body.className = "a5-message-body";
+
+  const textNode = document.createElement("div");
+  textNode.className = "a5-message-text";
+  textNode.textContent = text;
+  body.appendChild(textNode);
+
+  if (role === "assistant") {
+    const actions = document.createElement("div");
+    actions.className = "a5-message-actions";
+    actions.innerHTML = `
+      <button type="button" data-action="copy">Copy</button>
+      <button type="button" data-action="listen">Listen</button>
+      <button type="button" data-action="regenerate">Regenerate</button>
+    `;
+    actions.querySelector('[data-action="copy"]').onclick = async () => {
+      await navigator.clipboard?.writeText(text);
+      toast("Copied");
+    };
+    actions.querySelector('[data-action="listen"]').onclick = () => speak(text);
+    actions.querySelector('[data-action="regenerate"]').onclick = () => {
+      if (!lastUserPrompt) return;
+      const input = $("#message");
+      if (input) {
+        input.value = lastUserPrompt;
+        autoGrow();
+        send();
+      }
+    };
+    body.appendChild(actions);
+    if (provider) {
+      const route = document.createElement("div");
+      route.className = "a5-message-route";
+      route.textContent = `Routed through ${provider}`;
+      body.appendChild(route);
+    }
+  }
+
+  if (sources?.length) renderSources(body, sources);
+  wrap.append(meta, body);
+  host.appendChild(wrap);
+  requestAnimationFrame(() => wrap.scrollIntoView({ behavior: "smooth", block: "end" }));
+  return wrap;
+}
+
+function addMessage(role, text, sources = [], provider = "") {
+  if (document.body.classList.contains("a5")) return addShellMessage(role, text, sources, provider);
+
+  const page = $("#page");
+  if (!page) return null;
+  let messages = $("#messages");
+  if (!messages) {
+    page.innerHTML = '<div id="messages" class="messages"></div>';
+    messages = $("#messages");
+  }
+  const wrap = document.createElement("article");
+  wrap.className = `msg ${role}`;
+  wrap.innerHTML = `<div class="msgRole">${role === "user" ? "YOU" : "ANGEL"}</div><div class="msgBody"><p class="msgText"></p></div>`;
+  wrap.querySelector(".msgText").textContent = text;
+  messages.appendChild(wrap);
+  return wrap;
+}
+
+function activityFor(plan, research) {
+  if (research) return "Preparing research";
+  if (plan?.type === "coding") return "Planning the build";
+  if (plan?.type === "document_analysis") return "Reading the material";
+  if (plan?.type === "vision") return "Understanding the image";
+  if (plan?.type === "image_generation") return "Preparing the creative engine";
+  if (plan?.type === "agent_workflow") return "Planning the work";
+  return "Thinking";
+}
+
+async function send() {
+  const input = $("#message");
+  const text = input?.value?.trim();
+  if (!text || sending) return;
+
+  if (!session) {
+    openModal();
+    return;
+  }
+
+  input.value = "";
+  autoGrow();
+  lastUserPrompt = text;
+  sending = true;
+
+  ensureShellChat();
+  addMessage("user", text);
+  history.push({ role: "user", content: text });
+  setActivity("Preparing", true);
+
+  let thinking = null;
+  try {
+    const plan = await call(`${base}angel-orchestrator`, {
+      task: text,
+      mode: researchMode ? "research" : "auto"
+    });
+
+    setActivity(activityFor(plan, researchMode || plan.research_required), true);
+
+    const sources = [];
+    const context = [];
+
+    if (researchMode || plan.research_required) {
+      setActivity("Searching for useful sources", true);
+      const research = await call(`${base}angel-tools`, {
+        action: "research",
+        query: text,
+        max_results: 8
+      });
+      if (research.answer) {
+        context.push({
+          role: "system",
+          content: "Deep research report:\n" + research.answer
+        });
+      }
+      for (const item of research.results || []) sources.push(item);
+      if (sources.length) {
+        setActivity(`Reading ${sources.length} sources`, true);
+        context.push({
+          role: "system",
+          content:
+            "Retrieved web research. Use it when relevant. Do not invent citations.\n" +
+            sources.map((source, index) =>
+              `[${index + 1}] ${source.title || "Source"}\n${source.url || source.link || ""}\n${source.snippet || source.description || ""}`
+            ).join("\n\n")
+        });
+      } else {
+        toast("Research returned no sources, continuing normally.");
+      }
+    }
+
+    setActivity("Routing intelligence", true);
+    thinking = addMessage("assistant", "Working…");
+
+    const reply = await call(`${base}angel-chat`, {
+      messages: [...context, ...history.slice(-20)],
+      mode: plan?.type || "auto",
+      research: !!(researchMode || plan.research_required),
+      conversation_id: conversationId || undefined
+    });
+
+    thinking?.remove();
+    addMessage(
+      "assistant",
+      reply.reply || "I’m ready.",
+      sources,
+      `${reply.provider || "auto"}${reply.model ? ` · ${reply.model}` : ""}`
+    );
+    history.push({ role: "assistant", content: reply.reply || "" });
+    conversationId = reply.conversation_id || conversationId;
+    document.dispatchEvent(new CustomEvent("angel-conversation-changed", {
+      detail: { conversationId, title: text.slice(0, 80) }
+    }));
+
+    setActivity("Complete", true, true);
+    setTimeout(() => setActivity("", false), 900);
+  } catch (error) {
+    thinking?.remove();
+    addMessage("assistant", error?.message || "Angel could not complete that request.");
+    setActivity("Needs attention", true, true);
+    setTimeout(() => setActivity("", false), 1800);
+  } finally {
+    sending = false;
+  }
+}
+
+async function speak(text) {
+  if (!session) {
+    openModal();
+    return;
+  }
+  try {
+    toast("Preparing voice");
+    const result = await call(`${base}angel-tools`, {
+      action: "speak",
+      text,
+      voice: state.voiceStyle === "calm" ? "autumn" : "hannah"
+    });
+    if (!result.audio_base64) throw new Error("Voice output was empty.");
+
+    const binary = atob(result.audio_base64);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+
+    const audio = new Audio(
+      URL.createObjectURL(
+        new Blob([bytes], { type: result.mime_type || "audio/wav" })
+      )
+    );
+    await audio.play();
+  } catch (error) {
+    toast(error?.message || "Voice is unavailable.");
+  }
+}
+
+async function toggleMic() {
+  if (!session) {
+    openModal();
+    return;
+  }
+
+  if (recording) {
+    recorder?.stop();
+    return;
+  }
+
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const chunks = [];
+    recorder = new MediaRecorder(stream);
+
+    recorder.ondataavailable = (event) => chunks.push(event.data);
+    recorder.onstop = async () => {
+      recording = false;
+      $("#micBtn")?.classList.remove("active");
+      $("#voicePanel")?.classList.remove("open");
+      stream?.getTracks().forEach((track) => track.stop());
+
+      setActivity("Transcribing", true);
+      try {
+        const blob = new Blob(chunks, { type: recorder.mimeType || "audio/webm" });
+        const reader = new FileReader();
+        reader.onload = async () => {
+          try {
+            const result = await call(`${base}angel-tools`, {
+              action: "transcribe",
+              audio_base64: reader.result,
+              mime_type: blob.type
+            });
+            const input = $("#message");
+            if (input) {
+              input.value = result.text || "";
+              autoGrow();
+            }
+            setActivity("Voice captured", true, true);
+            setTimeout(() => setActivity("", false), 800);
+          } catch (error) {
+            toast(error?.message || "Transcription failed.");
+            setActivity("", false);
+          }
+        };
+        reader.readAsDataURL(blob);
+      } catch (error) {
+        toast(error?.message || "Could not process the recording.");
+        setActivity("", false);
+      }
+    };
+
+    recorder.start();
+    recording = true;
+    $("#micBtn")?.classList.add("active");
+    $("#voicePanel")?.classList.add("open");
+    setActivity("Listening", true);
+  } catch {
+    toast("Microphone access is unavailable.");
+  }
+}
+
+async function uploadFile(file) {
+  if (!file) return;
+  if (!session) {
+    openModal();
+    return;
+  }
+
+  ensureShellChat();
+  addMessage("user", `Attached · ${file.name}`);
+  setActivity(`Reading ${file.name}`, true);
+
+  const reader = new FileReader();
+  reader.onload = async () => {
+    try {
+      const data = String(reader.result).split(",")[1] || "";
+      if (file.type.startsWith("image/")) {
+        const result = await call(`${base}angel-vision`, {
+          image_base64: data,
+          mime_type: file.type,
+          prompt: "Analyze this image carefully. Describe useful visible details, read text when possible, and explain anything relevant to the user."
+        });
+        addMessage("assistant", result.reply || result.answer || "Image analyzed.");
+      } else {
+        const result = await call(`${base}angel-documents`, {
+          action: "analyze",
+          file_name: file.name,
+          mime_type: file.type || "application/octet-stream",
+          data_base64: data,
+          prompt: "Analyze this document and give the user the important information clearly."
+        });
+        addMessage("assistant", result.answer || result.reply || result.text || "Document analyzed.");
+      }
+      setActivity("Complete", true, true);
+      setTimeout(() => setActivity("", false), 800);
+    } catch (error) {
+      addMessage("assistant", error?.message || "The file could not be analyzed.");
+      setActivity("File analysis failed", true, true);
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+async function loadConversation(id) {
+  if (!session || !id) return;
+  const result = await supabase
+    .from("messages")
+    .select("role,content,created_at")
+    .eq("conversation_id", id)
+    .order("created_at", { ascending: true });
+
+  if (result.error) {
+    toast(result.error.message);
+    return;
+  }
+
+  conversationId = id;
+  history = (result.data || []).map((item) => ({
+    role: item.role,
+    content: item.content
+  }));
+
+  window.AngelShell?.showScreen?.("chat");
+  const host = ensureShellChat();
+  if (!host) return;
+  host.innerHTML = "";
+  for (const item of result.data || []) {
+    addMessage(item.role === "assistant" ? "assistant" : "user", item.content);
+  }
+  toast("Conversation restored");
+}
+
+function newChat() {
+  conversationId = null;
+  history = [];
+  lastUserPrompt = "";
+  window.AngelShell?.showScreen?.("chat");
+  const host = ensureShellChat();
+  if (host) host.innerHTML = "";
+  toast("New chat");
+}
+
+function toggleResearch() {
+  researchMode = !researchMode;
+  $("#researchBtn")?.classList.toggle("active", researchMode);
+  const stateNode = $("#toolState");
+  if (stateNode) stateNode.textContent = `Voice ready · Research ${researchMode ? "on" : "off"} · Files ready`;
+  document.querySelectorAll("[data-shell-research]").forEach((node) => {
+    node.classList.toggle("active", researchMode);
+  });
+  toast(researchMode ? "Research mode on" : "Research mode off");
+}
+
+function autoGrow() {
+  const input = $("#message");
+  if (!input) return;
+  input.style.height = "auto";
+  input.style.height = Math.min(input.scrollHeight, 170) + "px";
+}
+
+function openModal() {
+  $("#modalBackdrop")?.classList.add("open");
+}
+
+function closeModal() {
+  $("#modalBackdrop")?.classList.remove("open");
+}
+
+async function signIn() {
+  const result = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: { redirectTo: window.location.origin + "/" }
+  });
+  if (result.error && $("#authStatus")) $("#authStatus").textContent = result.error.message;
+}
+
+async function signOut() {
+  await supabase.auth.signOut();
+  session = null;
+  profile = null;
+  conversationId = null;
+  history = [];
+  closeModal();
+  await auth();
+  window.AngelShell?.showScreen?.("home");
+  toast("Signed out");
+}
+
+window.AngelCore = {
+  supabase,
+  base,
+  send,
+  speak,
+  toggleMic,
+  uploadFile,
+  signIn,
+  signOut,
+  newChat,
+  loadConversation,
+  toggleResearch,
+  openModal,
+  closeModal,
+  getSession: () => session,
+  getUser: () => session?.user || null,
+  getProfile: () => profile,
+  getDisplayName: () => username(),
+  getInitials: () => initials()
+};
+
+$("#sendBtn")?.addEventListener("click", send);
+$("#message")?.addEventListener("input", autoGrow);
+$("#message")?.addEventListener("keydown", (event) => {
+  if (event.key === "Enter" && !event.shiftKey) {
+    event.preventDefault();
+    send();
+  }
+});
+$("#micBtn")?.addEventListener("click", toggleMic);
+$("#researchBtn")?.addEventListener("click", toggleResearch);
+$("#uploadBtn")?.addEventListener("click", () => $("#fileInput")?.click());
+$("#fileInput")?.addEventListener("change", (event) => {
+  const file = event.target.files?.[0];
+  if (file) uploadFile(file);
+  event.target.value = "";
+});
+$("#googleBtn")?.addEventListener("click", signIn);
+$("#closeModal")?.addEventListener("click", closeModal);
+$("#modalBackdrop")?.addEventListener("click", (event) => {
+  if (event.target?.id === "modalBackdrop") closeModal();
+});
+$("#voiceClose")?.addEventListener("click", () => {
+  if (recorder && recording) recorder.stop();
+  $("#voicePanel")?.classList.remove("open");
+});
+$("#voiceStop")?.addEventListener("click", () => recorder?.stop());
+
+document.addEventListener("keydown", (event) => {
+  if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
+    event.preventDefault();
+    $("#message")?.focus();
+  }
+  if (event.key === "Escape") closeModal();
+});
+
+supabase.auth.onAuthStateChange(() => {
+  auth().catch(() => {});
+});
+
+document.body.dataset.density = state.density;
+document.body.dataset.motion = state.motion;
+
+auth().catch((error) => {
+  console.error("Angel auth", error);
+  document.dispatchEvent(new CustomEvent("angel-auth-changed", {
+    detail: { signedIn: false, user: null, profile: null }
+  }));
+});

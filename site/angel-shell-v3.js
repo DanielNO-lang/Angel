@@ -431,8 +431,7 @@ function renderComposer(){
       '<div class="a5-model-wrap"><button id="a5-model-btn" class="a5-compose-btn" title="Model"><span class="a5-model-mark">A</span><span>Model</span></button><div class="a5-popmenu a5-model-menu" id="a5-model-menu">'+["Auto","Fast","Reasoning","Deep Research","Creative"].map(x=>'<button class="a5-menuaction" data-model="'+x+'"><b>'+x+'</b></button>').join("")+'</div></div>'+
       '<button id="a5-send-visible" class="a5-send-visible" title="Voice">'+ico("voice")+'</button></div></div>';
   const msg=$("#message");
-  msg.addEventListener("input",()=>updateSendState());
-  msg.addEventListener("focus",()=>document.body.classList.add("a5-composer-focus"));
+  msg.addEventListener("input",()=>{\n    msg.style.height="auto";\n    msg.style.height=Math.min(msg.scrollHeight,170)+"px";\n    updateSendState();\n  });\n  msg.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();window.AngelCore?.send?.()}});\n  msg.addEventListener("focus",()=>document.body.classList.add("a5-composer-focus"));
   $("#a5-add-btn").onclick=()=>$("#a5-add-menu").classList.toggle("open");
   $("#a5-think-btn").onclick=()=>{think=!think;localStorage.setItem("angel.think",think?"1":"0");$("#a5-think-btn").classList.toggle("active",think);toast(think?"Think on":"Think off")};
   $("#a5-dictate-btn").onclick=()=>$("#micBtn")?.click();

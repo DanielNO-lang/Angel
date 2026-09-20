@@ -35,7 +35,7 @@ agent:"M12 4l1.8 4.6L19 10.5l-5.2 1.8L12 17l-1.8-4.7L5 10.5l5.2-1.9z",
 redo:"M5 12a7 7 0 0 1 13-3M18 9V5m0 4h-4"
 };
 const ico=n=>'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="'+(path[n]||path.more)+'"></path></svg>';
-let legacy={},screen="home",chatData=[],pinned=new Set(JSON.parse(localStorage.getItem("angel.pinned")||"[]")),archived=new Set(JSON.parse(localStorage.getItem("angel.archived")||"[]")),deleted=new Set(JSON.parse(localStorage.getItem("angel.deleted")||"[]")),themeMode=localStorage.getItem("angel.theme.mode")||localStorage.getItem("angel.theme")||"dark",selectedModel=localStorage.getItem("angel.model")||"Auto",think=false;
+let screen="home",chatData=[],pinned=new Set(JSON.parse(localStorage.getItem("angel.pinned")||"[]")),archived=new Set(JSON.parse(localStorage.getItem("angel.archived")||"[]")),deleted=new Set(JSON.parse(localStorage.getItem("angel.deleted")||"[]")),themeMode=localStorage.getItem("angel.theme.mode")||localStorage.getItem("angel.theme")||"dark",selectedModel=localStorage.getItem("angel.model")||"Auto",think=false;
 const isMobile=()=>innerWidth<=760;
 const isTablet=()=>innerWidth<=1024;
 function toast(t){const x=$("#toast");if(!x)return;x.textContent=t;x.classList.add("show");clearTimeout(x._t);x._t=setTimeout(()=>x.classList.remove("show"),2200)}
@@ -155,8 +155,7 @@ function syncBottom(){$("#a5-bottomnav [data-b]").forEach(b=>b.classList.toggle(
 function syncComposer(){const show=!["home","profile","settings","more","recycle"].includes(screen);document.body.classList.toggle("a5-hidecomposer",!show)}
 function init(){
  if(!$("#sidebar")||!$("#page"))return setTimeout(init,80);
- document.body.classList.add("a5");legacy.assistants=$("#v3AssistantsNav");legacy.sideAuth=$("#sideAuth");legacy.newChat=$("#newChat");
- const old=document.body.className;
+ document.body.classList.add("a5");
  if(isTablet()||localStorage.getItem("angel.sidebarCollapsed")==="1")document.body.classList.add("a5-collapsed");
  setTheme(themeMode);
  renderSidebar();buildTop();renderBottom();renderComposer();loadChats();

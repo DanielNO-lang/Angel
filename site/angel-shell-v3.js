@@ -50,6 +50,7 @@ let themeMode=localStorage.getItem("angel.theme.mode")||localStorage.getItem("an
 let selectedModel=localStorage.getItem("angel.model")||"Auto";
 let think=localStorage.getItem("angel.think")==="1";
 let signedIn=!!window.AngelCore?.getSession?.();
+let homeSceneTimer=null;
 
 const isMobile=()=>innerWidth<=760;
 const toast=t=>{const x=$("#toast");if(!x)return;x.textContent=t;x.classList.add("show");clearTimeout(x._t);x._t=setTimeout(()=>x.classList.remove("show"),2200)};
@@ -90,18 +91,18 @@ function renderSidebar(){
   const expanded='<div class="a5-expanded">'+
     '<div class="a5-brandrow"><button class="a5-brand" id="a5-brand" title="Angel home"><img src="/angel-logo.svg" alt="Angel"></button><div class="a5-brand-name">Angel</div><button class="a5-collapse" id="a5-collapse" title="Collapse sidebar">‹</button></div>'+
     '<div class="a5-searchrow" id="a5-searchrow"><button class="a5-searchbutton" id="a5-searchbutton" title="Search chats">'+ico("search")+'</button><input id="a5-searchinput" class="a5-searchinput" placeholder="Search chats…" autocomplete="off"></div>'+
-    '<button class="a5-newchat" data-nav="chat"><span class="a5-plus">＋</span><span>New chat</span></button>'+
+    '<button class="a5-newchat" data-nav="chat"><span class="a5-plus">＋</span><span>New Chat</span></button>'+
     navBtn("home","Home","home")+
     '<div class="a5-scroll">'+
-    '<button class="a5-subtoggle" data-toggle="pinned"><span>Pinned</span><b>›</b></button><div id="a5-pinned" class="a5-chatlist"></div>'+
-    '<button class="a5-subtoggle" data-toggle="archived"><span>Archived</span><b>›</b></button><div id="a5-archived" class="a5-chatlist"></div>'+
-    '<div class="a5-section">Tools</div>'+
-    tools.map(x=>navBtn(x[0],x[1],x[2])).join("")+
-    '<div class="a5-section">Recents</div><div class="a5-chatlist" id="a5-recents"></div></div>'+
-    '<div class="a5-quote"><p>'+["“Make useful things beautifully.”","“A good day can start small.”","“Keep the useful. Lose the noise.”","“Make room for the interesting parts.”"][Math.floor(Math.random()*4)]+'</p></div>'+
+      '<div class="a5-section">Tools</div>'+tools.map(x=>navBtn(x[0],x[1],x[2])).join("")+
+      '<div class="a5-section">Pinned</div><div id="a5-pinned" class="a5-chatlist"></div>'+
+      '<div class="a5-section">Archived</div><div id="a5-archived" class="a5-chatlist"></div>'+
+      '<div class="a5-section">Recents</div><div class="a5-chatlist" id="a5-recents"></div>'+
+    '</div>'+
+    '<div class="a5-quote"><p>'+["“Make useful things beautifully.”","“Keep the useful. Lose the noise.”","“Make room for the interesting parts.”","“Good systems should feel light.”"][Math.floor(Math.random()*4)]+'</p><small>ANGEL · ROTATING</small></div>'+
     '<div class="a5-profile" id="a5-profile"><button class="a5-profilebtn" id="a5-profilebtn"><span class="a5-avatar">'+initials(userName())+'</span><span style="min-width:0"><span class="a5-name">'+esc(userName())+'</span><span class="a5-plan">'+(guest?"Guest":"Free plan")+'</span></span><span style="margin-left:auto;color:var(--a5-faint)">›</span></button><div class="a5-profilemenu" id="a5-profilemenu"></div><div class="a5-helppanel" id="a5-helppanel"></div></div>'+
-    '</div>';
-  const railTools=guest?[["chat","chat"],["home","home"],["media","media"],["more","more"]]:[["chat","chat"],["home","home"],["agent","agent"],["projects","project"],["schedule","schedule"],["library","library"],["media","media"],["assistants","assistant"],["more","more"]];
+  '</div>';
+  const railTools=guest?[["home","home"],["media","media"],["more","more"]]:[["home","home"],["chat","chat"],["agent","agent"],["projects","project"],["schedule","schedule"],["library","library"],["media","media"],["assistants","assistant"],["more","more"]];
   const rail='<div class="a5-collapsed"><button class="a5-collapsed-logo" id="a5-rail-open" title="Open sidebar"><img src="/angel-logo.svg" alt="Angel"></button><div class="a5-rail">'+
     railTools.map(x=>'<button class="a5-railbtn" data-nav="'+x[0]+'" title="'+x[0]+'">'+ico(x[1])+'</button>').join("")+
     '</div><div class="a5-railspacer"></div><button class="a5-railavatar" id="a5-rail-profile">'+initials(userName())+'</button></div>'+
@@ -388,17 +389,61 @@ function showScreen(s,chatId=null){
 }
 
 function home(){
-  $("#page").innerHTML='<section class="a5-home"><div class="a5-homehead"><h1 class="a5-greeting">'+randomGreeting()+'</h1><span class="a5-presence" title="Angel is here"></span></div>'+
-    '<div class="a5-dashboardgrid">'+
-      '<div class="a5-card"><div class="a5-cardhead"><h2>Latest News</h2></div><div class="a5-news">'+
-        news("AI + technology","What’s changed recently?","latest AI technology news")+news("Agents","New ideas in browsing, automation and agents.","latest AI agents news")+news("Business + tech","Fresh headlines worth knowing.","latest technology business news")+news("Creative AI","Image, video and multimodal updates.","latest creative AI news")+
-      '</div></div>'+
-      '<div class="a5-card"><div class="a5-cardhead"><h2>Recent Activity</h2></div><div class="a5-activity">'+activity("Website redesign","Projects","project")+activity("Research task","Agent Lab","agent")+activity("Media work","Media Studio","image")+'</div></div>'+
-    '</div>'+
-    '<div class="a5-card a5-agent-home"><div class="a5-agentline"><span class="a5-actionicon">'+ico("agent")+'</span><div><b>Agent Lab</b></div><div class="a5-flex"></div><button class="a5-outline" data-nav="agent">Open</button></div></div>'+
-  '</section>';
-  $("#page [data-nav]")?.forEach(b=>b.onclick=()=>handleNav(b.dataset.nav));
-  $("#page [data-news]")?.forEach(b=>b.onclick=()=>{showScreen("chat");const input=$("#message");if(input){input.value=b.dataset.news;input.dispatchEvent(new Event("input",{bubbles:true}));input.focus()}});
+  if(homeSceneTimer)clearInterval(homeSceneTimer);
+  const scenes=[
+    ["Better ideas","build a brighter future.","Angel"],
+    ["Make room","for the interesting parts.","Angel"],
+    ["Small steps","can still move big things.","Angel"],
+    ["Turn the thought","into something real.","Angel"]
+  ];
+  let sceneIndex=Math.floor(Math.random()*scenes.length);
+  const scene=scenes[sceneIndex];
+  $("#page").innerHTML=
+    '<section class="a5-home">'+
+      '<div class="a5-homehead"><div><h1 class="a5-greeting">'+randomGreeting()+'</h1></div><span class="a5-presence" title="Angel is here"></span></div>'+
+      '<div class="a5-homegrid">'+
+        '<div class="a5-homeleft">'+
+          '<div class="a5-actiondeck">'+
+            '<button class="a5-action" data-nav="agent"><span class="a5-actionicon">'+ico("agent")+'</span><b>Agent Lab</b></button>'+
+            '<button class="a5-action" data-nav="projects"><span class="a5-actionicon">'+ico("project")+'</span><b>Projects</b></button>'+
+            '<button class="a5-action" data-nav="media"><span class="a5-actionicon">'+ico("image")+'</span><b>Create image</b></button>'+
+            '<button class="a5-action" data-nav="schedule"><span class="a5-actionicon">'+ico("schedule")+'</span><b>Schedule</b></button>'+
+            '<button class="a5-action" data-nav="library"><span class="a5-actionicon">'+ico("library")+'</span><b>Library</b></button>'+
+            '<button class="a5-action" data-nav="more"><span class="a5-actionicon">'+ico("more")+'</span><b>More</b></button>'+
+          '</div>'+
+          '<div class="a5-lowergrid">'+
+            '<div class="a5-card"><div class="a5-cardhead"><h2>Recent Activity</h2></div><div class="a5-activity">'+
+              activity("Website redesign","Projects","project")+activity("Research task","Agent Lab","agent")+activity("Media work","Media Studio","image")+
+            '</div></div>'+
+            '<div class="a5-card"><div class="a5-cardhead"><h2>Projects</h2></div>'+
+              '<div class="a5-projectrow"><span>'+ico("project")+'</span><div><b>Website Redesign</b><small>UI refresh · active</small></div><span>›</span></div>'+
+              '<div class="a5-projectrow"><span>'+ico("project")+'</span><div><b>Marketing Strategy</b><small>Research · active</small></div><span>›</span></div>'+
+              '<div class="a5-projectrow"><span>'+ico("project")+'</span><div><b>Music Learning App</b><small>Product scope</small></div><span>›</span></div>'+
+            '</div>'+
+          '</div>'+
+        '</div>'+
+        '<div class="a5-homeright">'+
+          '<div class="a5-scene" id="a5-scene"><div class="a5-scene-glow"></div><div class="a5-scene-copy"><strong>'+scene[0]+'<br>'+scene[1]+'</strong><small>'+scene[2]+'</small></div></div>'+
+          '<div class="a5-card a5-news-card"><div class="a5-cardhead"><h2>Latest News</h2></div><div class="a5-news">'+
+            news("AI + technology","Fresh search results when you ask.","latest AI technology news")+
+            news("Agents & automation","Browse what changed recently.","latest AI agents news")+
+            news("Creative AI","Image, video and multimodal updates.","latest creative AI news")+
+          '</div></div>'+
+        '</div>'+
+      '</div>'+
+    '</section>';
+  $$("#page [data-nav]")?.forEach(b=>b.onclick=()=>handleNav(b.dataset.nav));
+  $$("#page [data-news]")?.forEach(b=>b.onclick=()=>{showScreen("chat");const input=$("#message");if(input){input.value=b.dataset.news;input.dispatchEvent(new Event("input",{bubbles:true}));input.focus()}});
+  const sceneHost=$("#a5-scene");
+  homeSceneTimer=setInterval(()=>{
+    if(screen!=="home"){clearInterval(homeSceneTimer);homeSceneTimer=null;return}
+    sceneIndex=(sceneIndex+1)%scenes.length;
+    const next=scenes[sceneIndex];
+    const copy=sceneHost?.querySelector(".a5-scene-copy");
+    if(!copy)return;
+    copy.classList.add("is-changing");
+    setTimeout(()=>{copy.innerHTML='<strong>'+next[0]+'<br>'+next[1]+'</strong><small>'+next[2]+'</small>';copy.classList.remove("is-changing")},220);
+  },26000);
 }
 function news(a,b,c){return '<button class="a5-newsrow" data-news="'+esc(c)+'"><span class="a5-newsdot"></span><div><b>'+a+'</b><small>'+b+'</small></div></button>'}
 function activity(a,b,i){return '<div class="a5-activityrow"><span class="a5-activityicon">'+ico(i)+'</span><div><b>'+a+'</b><small>'+b+'</small></div></div>'}
@@ -409,12 +454,11 @@ function chat(chatId=null){
     '<button class="a5-chip" data-prompt="Help me think through something.">Help me think this through</button>'+
     '<button class="a5-chip" data-prompt="Let’s plan something practical.">Plan something practical</button>'+
     '<button class="a5-chip" data-prompt="I have a rough idea. Help me shape it.">Shape an idea</button>'+
-    '</div></div><div id="a5-chatstream" class="a5-chatstream"></div></section>';
-  $$("#page [data-prompt]")?.forEach(b=>b.onclick=()=>{$("#message").value=b.dataset.prompt;$("#message").dispatchEvent(new Event("input",{bubbles:true}));$("#message").focus()});
+  '</div></div><div id="a5-chatstream" class="a5-chatstream"></div></section>';
+  $$("#page [data-prompt]")?.forEach(b=>b.onclick=()=>{const input=$("#message");input.value=b.dataset.prompt;input.dispatchEvent(new Event("input",{bubbles:true}));input.focus()});
   if(chatId&&!String(chatId).startsWith("demo-")&&window.AngelCore?.loadConversation)setTimeout(()=>window.AngelCore.loadConversation(chatId),0);
   syncComposer();
 }
-
 function assistantsPage(){
   $("#page").innerHTML='<section class="a5-page"><h1>Assistants</h1><div class="a5-grid3"><article class="a5-media"><b>Research Scout</b><span>Cross-check sources and build research briefs.</span></article><article class="a5-media"><b>Build Coach</b><span>Plan, code, test and review projects.</span></article><article class="a5-media"><b>Memory Steward</b><span>Keep useful long-term preferences clean.</span></article><article class="a5-media"><b>Visual Analyst</b><span>Understand screenshots, images and documents.</span></article><button class="a5-media" id="a5-open-agent-assistant"><b>Custom Assistant</b><span>Create one in Agent Lab.</span></button></div></section>';
   $("#a5-open-agent-assistant")?.addEventListener("click",openAgentLab);

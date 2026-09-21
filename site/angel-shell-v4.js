@@ -196,7 +196,7 @@ function showSearch(term){
  let p=$("#a5-searchresults");if(!p){p=document.createElement("div");p.id="a5-searchresults";p.className="a5-pop open";document.body.appendChild(p);}
  const q=term.trim().toLowerCase(),rows=chatData.filter(x=>x.title.toLowerCase().includes(q));
  p.innerHTML='<div class="a5-poptitle">Search chats</div>'+rows.slice(0,10).map(x=>'<button data-sr="'+esc(x.id)+'">'+ico("chat")+'<span>'+esc(x.title)+'</span></button>').join("")+(rows.length?"":"<div class="a5-notice">No matching chats.</div>");
- const r=$("#a5-searchrow"),rect=r?.getBoundingClientRect();p.style.left=Math.min(innerWidth-270,(rect?.right||300)+8)+"px";p.style.top=(rect?.top||80)+"px";
+ const r=$(".a5-searchrow"),rect=r?.getBoundingClientRect();p.style.left=Math.min(innerWidth-270,(rect?.right||300)+8)+"px";p.style.top=(rect?.top||80)+"px";
  p.querySelectorAll("[data-sr]").forEach(b=>b.onclick=()=>{p.remove();showScreen("chat",b.dataset.sr)});
 }
 async function chatAction(id,action){
@@ -399,9 +399,9 @@ function home(){
  const greeting=guestGreetings[Math.floor(Math.random()*guestGreetings.length)];
  $("#page").innerHTML='<section class="a5-home"><div class="a5-homehead"><h1>'+esc(greeting)+'</h1></div>'+
  '<div class="a5-dashboard">'+
- '<button class="a5-dashboard-card" data-nav="agent"><span class="a5-dashicon">'+ico("agent")+'</span><strong>Agent Lab</strong><small>Run and review multi-step work</small></button>'+
- '<button class="a5-dashboard-card" data-nav="projects"><span class="a5-dashicon">'+ico("project")+'</span><strong>Projects</strong><small>Keep long-running work together</small></button>'+
- '<button class="a5-dashboard-card" data-nav="media"><span class="a5-dashicon">'+ico("media")+'</span><strong>Media Studio</strong><small>Create and explore visual work</small></button>'+
+ '<button class="a5-dashboard-card" data-nav="agent"><span class="a5-dashicon">'+ico("agent")+'</span><strong>Agent Lab</strong></button>'+
+ '<button class="a5-dashboard-card" data-nav="projects"><span class="a5-dashicon">'+ico("project")+'</span><strong>Projects</strong></button>'+
+ '<button class="a5-dashboard-card" data-nav="media"><span class="a5-dashicon">'+ico("media")+'</span><strong>Media Studio</strong></button>'+
  '<div class="a5-dashboard-panel"><div class="a5-cardtitle">Latest News</div><div class="a5-newslist">'+
  newsRow("AI tools","Search what changed in the AI world.","latest AI tools and product updates")+
  newsRow("Technology","Get fresh technology headlines.","latest technology news")+
@@ -431,7 +431,7 @@ function showScreen(s,chatId=null){
  screen=s;setScreenClass(s);
  if(s==="home")home();
  else if(s==="chat")chatPage(chatId);
- else if(s==="agent"){document.dispatchEvent(new CustomEvent("angel-agent-lab-open"));$("#page").innerHTML='<section class="a5-page"><h1>Agent Lab</h1></section>';setTimeout(()=>window.dispatchEvent(new Event("angel-agent-lab-open")),0)}
+ else if(s==="agent"){$("#page").innerHTML='<section class="a5-page"><h1>Agent Lab</h1></section>';setTimeout(()=>window.dispatchEvent(new Event("angel-agent-lab-open")),0)}
  else if(s==="projects")simplePage("Projects",[["Angel website","UI work"],["Agent Lab","Agent workflows"],["Music learning app","Product scope"],["School ICT tools","Teaching tools"]]);
  else if(s==="schedule")simplePage("Schedule",[["Angel UI review","Tonight"],["Weekly review","Recurring"],["Research digest","Monday"],["Follow-up","Tomorrow"]]);
  else if(s==="library")simplePage("Library",[["Agent Lab research","PDF"],["AI assistant comparison","Document"],["Angel scaffold","ZIP"],["Generated media","Collection"]]);
@@ -453,10 +453,12 @@ function simpleSecondary(name){
 }
 function syncNav(){$$(".a5-navitem").forEach(b=>b.classList.toggle("active",b.dataset.nav===screen))}
 function renderBottom(){
- if($("#a5-bottomnav"))return;
+ if($("#a5-bottomnav"))$("#a5-bottomnav").remove();
  const n=document.createElement("nav");n.id="a5-bottomnav";n.className="a5-bottomnav";
- n.innerHTML='<button data-b="home">'+ico("home")+'<span>Home</span></button><button data-b="chat">'+ico("chat")+'<span>Chats</span></button><button data-b="projects">'+ico("project")+'<span>Projects</span></button><button data-b="agent">'+ico("agent")+'<span>Agent Lab</span></button><button data-b="more">'+ico("more")+'<span>More</span></button>';
- document.body.append(n);$$("[data-b]").forEach(b=>b.onclick=()=>handleNav(b.dataset.b));
+ n.innerHTML=signedIn
+ ? '<button data-b="home">'+ico("home")+'<span>Home</span></button><button data-b="chat">'+ico("chat")+'<span>Chats</span></button><button data-b="projects">'+ico("project")+'<span>Projects</span></button><button data-b="agent">'+ico("agent")+'<span>Agent Lab</span></button><button data-b="more">'+ico("more")+'<span>More</span></button>'
+ : '<button data-b="home">'+ico("home")+'<span>Home</span></button><button data-b="media">'+ico("media")+'<span>Media</span></button><button data-b="more">'+ico("more")+'<span>More</span></button>';
+ document.body.append(n);$("[data-b]").forEach(b=>b.onclick=()=>{if(b.dataset.b==="media")return handleNav("media");handleNav(b.dataset.b)});
 }
 function syncBottom(){
  const map=screen==="agent"?"agent":screen==="chat"?"chat":screen==="projects"?"projects":screen==="more"?"more":"home";
@@ -469,12 +471,12 @@ function syncComposer(){
 function showSecondary(name){
  if(name==="Secrets")return showScreen("secrets");
  if(name==="Recycle Bin")return showScreen("recycle");
- if(name==="Marketplace"||name==="Skills")return window.dispatchEvent(new Event("angel-agent-lab-open"));
+ if(name==="Marketplace"||name==="Skills"){if(!signedIn)return openAuth("Sign in to use this workspace.");setScreenClass("agent");screen="agent";syncComposer();syncNav();syncBottom();return window.dispatchEvent(new Event("angel-agent-lab-open"));}
  if(name==="Charts")return simpleSecondary("Charts");
- if(name==="Memory")return simpleSecondary("Memory");
+ if(name==="Memory"){if(!signedIn)return openAuth("Sign in to use Memory.");return simpleSecondary("Memory");}
  if(name==="Multimodal")return simpleSecondary("Multimodal");
- if(name==="Plugins")return simpleSecondary("Plugins");
- if(name==="Connections")return simpleSecondary("Connections");
+ if(name==="Plugins"){if(!signedIn)return openAuth("Sign in to use Plugins.");return simpleSecondary("Plugins");}
+ if(name==="Connections"){if(!signedIn)return openAuth("Sign in to use Connections.");return simpleSecondary("Connections");}
 }
 function init(){
  if(!$("#sidebar")||!$("#page"))return setTimeout(init,80);

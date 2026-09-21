@@ -195,7 +195,7 @@ function showSearch(term){
  if(!signedIn){openAuth("Sign in to search saved chats.");return;}
  let p=$("#a5-searchresults");if(!p){p=document.createElement("div");p.id="a5-searchresults";p.className="a5-pop open";document.body.appendChild(p);}
  const q=term.trim().toLowerCase(),rows=chatData.filter(x=>x.title.toLowerCase().includes(q));
- p.innerHTML='<div class="a5-poptitle">Search chats</div>'+rows.slice(0,10).map(x=>'<button data-sr="'+esc(x.id)+'">'+ico("chat")+'<span>'+esc(x.title)+'</span></button>').join("")+(rows.length?"":"<div class="a5-notice">No matching chats.</div>");
+ p.innerHTML='<div class="a5-poptitle">Search chats</div>'+rows.slice(0,10).map(x=>'<button data-sr="'+esc(x.id)+'">'+ico("chat")+'<span>'+esc(x.title)+'</span></button>').join("")+(rows.length?"":'<div class="a5-notice">No matching chats.</div>');
  const r=$(".a5-searchrow"),rect=r?.getBoundingClientRect();p.style.left=Math.min(innerWidth-270,(rect?.right||300)+8)+"px";p.style.top=(rect?.top||80)+"px";
  p.querySelectorAll("[data-sr]").forEach(b=>b.onclick=()=>{p.remove();showScreen("chat",b.dataset.sr)});
 }

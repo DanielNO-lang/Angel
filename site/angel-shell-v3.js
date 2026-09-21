@@ -190,7 +190,14 @@ function openChatMenu(id,btn){
 async function chatAction(id,a){
   if(a==="pin"){pinned.has(id)?pinned.delete(id):pinned.add(id);persist("angel.pinned",pinned);paintChats();return}
   if(a==="archive"){archived.add(id);persist("angel.archived",archived);paintChats();return}
-  if(a==="delete"){deleted.add(id);persist("angel.deleted",deleted);paintChats();toast("Moved to Recycle Bin");return}
+  if(a==="delete"){
+    deleted.add(id);persist("angel.deleted",deleted);
+    const current=chatData.find(x=>x.id===id);
+    const meta=JSON.parse(localStorage.getItem("angel.deletedChats")||"{}");
+    meta[id]={id,title:current?.title||"Conversation",deletedAt:new Date().toISOString()};
+    localStorage.setItem("angel.deletedChats",JSON.stringify(meta));
+    paintChats();toast("Moved to Recycle Bin");return
+  }
   if(a==="share"){navigator.clipboard?.writeText(location.origin+"/?chat="+encodeURIComponent(id));toast("Chat link copied");return}
   if(a==="rename"){
     const current=chatData.find(x=>x.id===id);const title=prompt("Rename this chat",current?.title||"Conversation");if(!title?.trim())return;
@@ -368,7 +375,7 @@ function showScreen(s,chatId=null){
   else if(s==="assistants")assistantsPage();
   else if(s==="profile")simple("Profile",[["Name",userName()],["Plan",signedIn?"Free plan":"Guest"],["Personalization","Available"],["Account security","Supabase Auth"]]);
   else if(s==="settings")simple("Settings",[["Theme","Dark, light or device"],["Sidebar","Expanded or collapsed"],["Voice","Dictation and voice mode"],["Visual","Camera or screen"]]);
-  else if(s==="recycle")simple("Recycle Bin",[["Deleted chats","Moved here from chat actions"],["Restore","Available in the next pass"],["Empty bin","Permanent deletion requires confirmation"]]);
+  else if(s==="recycle")recyclePage();
   else if(s==="marketplace")simple("Marketplace",[["Public assistants","Browse reusable assistants"],["Install","Add useful assistants to Angel"],["Publish","Create from Agent Lab"]]);
   else if(s==="charts")simple("Charts",[["Quick chart","Turn data into a visual"],["Compare","Side-by-side data views"],["Export","Use analysis results in projects"]]);
   else if(s==="memory")simple("Memory",[["Preferences","Useful things Angel can remember"],["Review","Inspect stored memories"],["Clean up","Remove what is no longer useful"]]);
@@ -415,6 +422,15 @@ function assistantsPage(){
 function media(){
   $("#page").innerHTML='<section class="a5-page"><h1>Media Studio</h1><div class="a5-card"><div class="a5-cardhead"><h2>Images</h2></div><div class="a5-grid3">'+["Nature moodboard","Product concept","Editorial portrait","Social pack","Wallpaper series","Brand banner"].map(x=>'<button class="a5-media"><b>'+x+'</b><span>Image workflow</span></button>').join("")+'</div></div><div class="a5-card" style="margin-top:13px"><div class="a5-cardhead"><h2>Video</h2></div><div class="a5-grid3">'+["Product teaser","Explainer","Short-form story"].map(x=>'<button class="a5-media"><b>'+x+'</b><span>Video workflow</span></button>').join("")+'</div></div></section>';
 }
+function recyclePage(){
+  const meta=JSON.parse(localStorage.getItem("angel.deletedChats")||"{}");
+  const rows=Object.values(meta).sort((a,b)=>String(b.deletedAt).localeCompare(String(a.deletedAt)));
+  $("#page").innerHTML='<section class="a5-page"><h1>Recycle Bin</h1><div class="a5-recyclelist">'+
+    (rows.length?rows.map(x=>'<div class="a5-recyclerow"><span>'+ico("trash")+'</span><div><b>'+esc(x.title)+'</b><small>Moved here '+new Date(x.deletedAt).toLocaleString()+'</small></div><div class="a5-recycleactions"><button data-restore="'+esc(x.id)+'">Restore</button><button data-permadelete="'+esc(x.id)+'">Delete permanently</button></div></div>').join(""):'<div class="a5-emptybox">Nothing in the Recycle Bin.</div>')+
+    '</div></section>';
+  $("#page [data-restore]").forEach(b=>b.onclick=()=>{const id=b.dataset.restore;deleted.delete(id);persist("angel.deleted",deleted);delete meta[id];localStorage.setItem("angel.deletedChats",JSON.stringify(meta));loadChats();toast("Chat restored")});
+  $("#page [data-permadelete]").forEach(b=>b.onclick=()=>{const id=b.dataset.permadelete;delete meta[id];localStorage.setItem("angel.deletedChats",JSON.stringify(meta));deleted.delete(id);persist("angel.deleted",deleted);recyclePage();toast("Deleted permanently")});
+}
 function simple(t,rows){$("#page").innerHTML='<section class="a5-page"><h1>'+t+'</h1><div class="a5-simplegrid">'+rows.map(r=>'<div class="a5-simple"><b>'+esc(r[0])+'</b><span>'+esc(r[1])+'</span></div>').join("")+'</div></section>'}
 
 function renderComposer(){
@@ -429,7 +445,7 @@ function renderComposer(){
       '<button id="a5-dictate-btn" class="a5-compose-btn" title="Dictate">'+ico("mic")+'<span>Dictate</span></button>'+
       '<div class="a5-visual-wrap"><button id="a5-visual-btn" class="a5-compose-btn" title="Visual">'+ico("camera")+'<span>Visual</span></button><div class="a5-popmenu a5-visual-menu" id="a5-visual-menu"><button class="a5-menuaction" data-visual="camera">'+ico("camera")+'<span>Live camera</span></button><button class="a5-menuaction" data-visual="screen">'+ico("device")+'<span>Share screen</span></button></div></div>'+
       '<button id="a5-voice-btn" class="a5-compose-btn" title="Voice">'+ico("voice")+'<span>Voice</span></button>'+
-      '<div class="a5-model-wrap"><button id="a5-model-btn" class="a5-compose-btn" title="Model"><span class="a5-model-mark">A</span><span>Model</span></button><div class="a5-popmenu a5-model-menu" id="a5-model-menu">'+["Auto","Fast","Reasoning","Deep Research","Creative"].map(x=>'<button class="a5-menuaction" data-model="'+x+'"><b>'+x+'</b></button>').join("")+'</div></div>'+
+      '<div class="a5-model-wrap"><button id="a5-model-btn" class="a5-compose-btn" title="Model"><span class="a5-model-mark">A</span><span>Model: '+esc(selectedModel)+'</span></button><div class="a5-popmenu a5-model-menu" id="a5-model-menu">'+["Auto","Fast","Reasoning","Deep Research","Creative"].map(x=>'<button class="a5-menuaction" data-model="'+x+'"><b>'+x+'</b></button>').join("")+'</div></div>'+
       '<button id="a5-send-visible" class="a5-send-visible" title="Voice">'+ico("voice")+'</button></div></div>';
   const msg=$("#message");
   msg.addEventListener("input",()=>{

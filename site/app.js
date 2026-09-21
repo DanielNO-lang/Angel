@@ -28,6 +28,7 @@ let recording = false;
 let recorder = null;
 let stream = null;
 let lastUserPrompt = "";
+let guestMessageCount = 0;
 
 function displayNameFor(user = session?.user) {
   if (!user) return "there";
@@ -527,6 +528,7 @@ function newChat() {
   conversationId = null;
   history = [];
   lastUserPrompt = "";
+  guestMessageCount = 0;
   window.AngelShell?.showScreen?.("chat");
   const host = ensureShellChat();
   if (host) host.innerHTML = "";

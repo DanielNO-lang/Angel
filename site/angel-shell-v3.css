@@ -56,3 +56,9 @@ body.a5 #message{width:100%;min-height:46px;max-height:170px;resize:none;border:
   .a5-bottomnav{display:flex;position:fixed;left:0;right:0;bottom:0;height:59px;background:color-mix(in srgb,var(--a5-bg) 95%,transparent);border-top:1px solid var(--a5-line);backdrop-filter:blur(24px);z-index:480}
   .a5-bottomnav button{flex:1;border:0;background:transparent;color:var(--a5-faint);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer}.a5-bottomnav button.active{color:var(--a5-text)}.a5-bottomnav button svg{width:17px;height:17px}.a5-bottomnav span{font-size:7px}
 }
+
+.a5-recyclelist{display:grid;gap:8px}
+.a5-recyclerow{display:flex;align-items:center;gap:10px;padding:11px 12px;border:1px solid var(--a5-line);background:var(--a5-panel);border-radius:11px}
+.a5-recyclerow>span{width:28px;height:28px;border:1px solid var(--a5-line);border-radius:8px;display:grid;place-items:center;color:var(--a5-danger)}
+.a5-recyclerow>div:nth-child(2){min-width:0;flex:1}.a5-recyclerow b{display:block;font-size:10px}.a5-recyclerow small{display:block;color:var(--a5-faint);font-size:7px;margin-top:3px}
+.a5-recycleactions{display:flex;gap:5px}.a5-recycleactions button{height:29px;padding:0 8px;border:1px solid var(--a5-line2);border-radius:8px;background:transparent;color:var(--a5-muted);font-size:8px;cursor:pointer}.a5-recycleactions button:hover{background:var(--a5-panel2);color:var(--a5-text)}

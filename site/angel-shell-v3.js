@@ -101,7 +101,7 @@ function renderSidebar(){
     '<div class="a5-quote"><p>'+["“Make useful things beautifully.”","“A good day can start small.”","“Keep the useful. Lose the noise.”","“Make room for the interesting parts.”"][Math.floor(Math.random()*4)]+'</p></div>'+
     '<div class="a5-profile" id="a5-profile"><button class="a5-profilebtn" id="a5-profilebtn"><span class="a5-avatar">'+initials(userName())+'</span><span style="min-width:0"><span class="a5-name">'+esc(userName())+'</span><span class="a5-plan">'+(guest?"Guest":"Free plan")+'</span></span><span style="margin-left:auto;color:var(--a5-faint)">›</span></button><div class="a5-profilemenu" id="a5-profilemenu"></div><div class="a5-helppanel" id="a5-helppanel"></div></div>'+
     '</div>';
-  const railTools=guest?[["chat","chat"],["home","home"],["media","media"],["more","more"]]:[["chat","chat"],["home","home"],["agent","agent"],["projects","project"],["schedule","schedule"],["library","library"],["media","media"],["assistants","assistant"],["more","more"]];
+  const railTools=guest?[["home","home"],["media","media"],["more","more"]]:[["chat","chat"],["home","home"],["agent","agent"],["projects","project"],["schedule","schedule"],["library","library"],["media","media"],["assistants","assistant"],["more","more"]];
   const rail='<div class="a5-collapsed"><button class="a5-collapsed-logo" id="a5-rail-open" title="Open sidebar"><img src="/angel-logo.svg" alt="Angel"></button><div class="a5-rail">'+
     railTools.map(x=>'<button class="a5-railbtn" data-nav="'+x[0]+'" title="'+x[0]+'">'+ico(x[1])+'</button>').join("")+
     '</div><div class="a5-railspacer"></div><button class="a5-railavatar" id="a5-rail-profile">'+initials(userName())+'</button></div>'+

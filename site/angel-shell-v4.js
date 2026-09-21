@@ -416,7 +416,7 @@ function home(){
  $$("#page [data-news]").forEach(b=>b.onclick=()=>{if(!signedIn)return openAuth("Sign in to run live search.");showScreen("chat");const input=$("#message");input.value=b.dataset.news;input.focus();input.dispatchEvent(new Event("input",{bubbles:true}))});
  updateTopVisibility();
 }
-function newsRow(a,b,q){return '<button class="a5-newsrow" data-news="'+esc(q)+'"><span class="a5-newsdot"></span><span><b>'+a+'</b><small>'+b+'</small></span></button>}
+function newsRow(a,b,q){return '<button class="a5-newsrow" data-news="'+esc(q)+'"><span class="a5-newsdot"></span><span><b>'+a+'</b><small>'+b+'</small></span></button>'}
 function activityRow(a,b){return '<div class="a5-activityrow"><span class="a5-activityicon">'+ico(a==="Agent Lab"?"agent":a==="Projects"?"project":"media")+'</span><span><b>'+a+'</b><small>'+b+'</small></span></div>'}
 function chatPage(chatId=null){
  const greeting=chatGreetings[Math.floor(Math.random()*chatGreetings.length)];
